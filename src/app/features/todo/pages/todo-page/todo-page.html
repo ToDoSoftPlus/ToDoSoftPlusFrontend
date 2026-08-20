@@ -1,1 +1,40 @@
-<p>todo-page works!</p>
+<div class="todo-page">
+    <div class="todo-sidebar">
+        <div class="todo-sidebar__user-wrapper">
+            <img class="todo-sidebar__user-image" src="" alt="">
+            <div class="todo-sidebar__user-info-wrapper">
+                <p class="todo-sidebar__user-info-name">User</p>
+                <p class="todo-sidebar__user-info-gmail">User@gmail.com</p>
+            </div>
+        </div>
+
+        <div class="todo-sidebar__search-lists-wrapper">
+            <input type="text" name="serach-lists" id="search-lists">
+        </div>
+
+        <div class="todo-sidebar__system-lists-wrapper">
+            @for (systemList of toDoSidebarSystemLists; track systemList.id) {
+                <app-todo-sidebar-list [toDoSidebarList]="systemList"/>
+            }
+        </div>
+
+        <hr/>
+
+        <div class="todo-sidebar__user-lists-wrapper">
+            @for (userList of toDoSidebarUserLists; track userList.id) {
+                <app-todo-sidebar-list [toDoSidebarList]="userList"/>
+            }
+        </div>
+
+        <div class="todo-sidebar__actions-wrapper">
+            <div class="todo-sidebar__action-add-list">
+                <img class="todo-sidebar__action-add-list-image" src="" alt="">
+                <p class="todo-sidebar__action-add-list-text">Створити список</p>
+            </div>
+        </div>
+    </div>
+
+    <section class="todo-container">
+
+    </section>
+</div>
