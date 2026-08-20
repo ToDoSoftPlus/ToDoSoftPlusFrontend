@@ -1,0 +1,21 @@
+<div class="todo-list-view__container">
+    <div class="todo-list-view__header">
+        <div class="todo-list-view__header-title-wrapper">
+            <img class="todo-list-view__header-title-image" src="" alt="">
+            <p class="todo-list-view__header-title-text"></p>
+        </div>
+
+        <div class="todo-list-view__item-list-wrapper">
+            @for (item of toDoList().toDoItems; track item.id) {
+                <app-todo-item-list [toDoItem]="item"/>
+            }
+        </div>
+
+        <div class="todo-list-view__actions-wrapper">
+            <div class="todo-list-view__actions-add">
+                <img class="todo-list-view__actions-add-image" src="" alt="">
+                <input class="todo-list-view__actions-add-input" type="text" name="todo-item-title" id="todo-item-title">
+            </div>
+        </div>
+    </div>
+</div>
