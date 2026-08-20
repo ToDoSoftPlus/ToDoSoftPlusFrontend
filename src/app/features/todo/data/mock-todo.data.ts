@@ -2,7 +2,7 @@ import { ToDoList } from "../../../core/models/todo-list.model";
 
 export const USERID: number = 1;
 
-export const TODO_LISTs: ToDoList[] = [
+export const TODO_LISTS: ToDoList[] = [
     {
         id: 1,
         title: "list1",
