@@ -4,8 +4,8 @@ export interface ToDoList {
     id: number,
     title: string,
     description: string | null,
-    createdAt: Date,
-    updatedetAt: Date,
+    createdAt: number,
+    updatedetAt: number,
     userId: number,
-    toDoItems: Array<ToDoItem>
+    toDoItems: Array<ToDoItem> | null
 }
