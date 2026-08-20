@@ -5,7 +5,7 @@ import { ToDoSidebarList } from '../../models/todo-sidebar-list.model';
   selector: 'app-todo-sidebar-list',
   imports: [],
   templateUrl: './todo-sidebar-list.html',
-  styleUrl: './todo-sidebar-list.css',
+  styleUrl: './todo-sidebar-list.scss',
 })
 export class TodoSidebarList {
   toDoSidebarList = input.required<ToDoSidebarList>();
