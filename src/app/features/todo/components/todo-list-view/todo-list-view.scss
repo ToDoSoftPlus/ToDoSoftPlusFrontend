@@ -1,0 +1,30 @@
+.todo-list-view {
+    &__container {
+        border-top-left-radius: 16px;
+        border-bottom-left-radius: 16px;
+        background-color: #FFDADA;
+    }
+
+    &__actions {
+
+        &-add {
+            border-radius: 8px;
+            background-color: #F2EFE7;
+            transition: background-color ease-in-out 200ms;
+
+            &:hover {
+                background-color: #e9e7df;
+            }
+
+            &-input {
+                position: relative;
+                border: none;
+                outline: none;
+            }
+
+            &:has(&-input:focus) {
+                background-color: #e9e7df;
+            }
+        }
+    }
+}
