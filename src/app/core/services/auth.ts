@@ -4,7 +4,7 @@ import { AuthResponse } from '../models/auth/auth-response.model';
 import { RegisterRequest } from '../../features/user/models/register.model';
 import { LoginRequest } from '../../features/user/models/login.model';
 import { UserInfo } from '../models/user/user-info.model';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment.local';
 
 @Injectable({
@@ -17,26 +17,28 @@ export class AuthSevice {
 
     constructor(private http: HttpClient) { }
 
-    register(request: RegisterRequest): void {
-        this.http.post<AuthResponse>(
-            `${this.apiUrl}/v1/register`,
+    register(request: RegisterRequest): Observable<AuthResponse> {
+        return this.http.post<AuthResponse>(
+            `${this.apiUrl}/v1/auth/register`,
             request
-        ).subscribe({
-            next: response => {
-                this.setAccessToken(response.accessToken, response.expiresAt);
+        ).pipe(
+            tap(response => {
+                this.setAccessToken(response.accessToken, response.accessTokenExpiresAt);
                 this.currentUser.set(response.userInfo);
-            },
-            error: error => console.log(error)
-        });
+            })
+        );
     }
 
     login(request: LoginRequest): void {
         this.http.post<AuthResponse>(
-            `${this.apiUrl}/v1/login`,
-            request
+            `${this.apiUrl}/v1/auth/login`,
+            request,
+            {
+                withCredentials: true,
+            }
         ).subscribe({
             next: response => {
-                this.setAccessToken(response.accessToken, response.expiresAt);
+                this.setAccessToken(response.accessToken, response.accessTokenExpiresAt);
                 this.currentUser.set(response.userInfo);
             },
             error: error => console.log(error)
@@ -54,28 +56,32 @@ export class AuthSevice {
     }
 
     async getCurrentUserInfo(): Promise<UserInfo | null | undefined> {
-        if (this.currentUser() == null || this.currentUser() == undefined) {
-            const token = this.getToken();
+        const currentUser = this.currentUser();
 
-            if (!token) {
-                return null;
-            }
-
-            const user = await firstValueFrom(
-                this.http.get<UserInfo>(`${this.apiUrl}/v1/user/me`)
-            );
-
-            this.currentUser.set(user);
+        if (currentUser) {
+            return currentUser;
         }
 
-        return this.currentUser();
+        const token = this.getToken();
+
+        if (!token) {
+            return null;
+        }
+
+        const user = await firstValueFrom(
+            this.http.get<UserInfo>(`${this.apiUrl}/v1/user/me`)
+        );
+
+        this.currentUser.set(user);
+
+        return user;
     }
 
     isAuthenticated(): boolean {
         if (this.getToken() == null) {
             return false;
         }
-        
+
         return true
     }
 

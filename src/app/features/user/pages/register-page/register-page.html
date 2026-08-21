@@ -4,21 +4,49 @@
             <h1 class="register__title font-bold text-3xl">Register</h1>
         </div>
 
-        <form class="register__form" action="">
+        <form class="register__form" (submit)="onSubmit($event)">
             <div class="register__form-name-wrapper mb-8">
-                <input class="register__form-name-input form-input" type="text" placeholder="Username">
+                <input class="register__form-name-input form-input" type="text" placeholder="Username"
+                    [formField]="registerForm.userName">
+
+                @if (registerForm.userName().invalid() && registerForm.userName().touched()) {
+                <div class="register__form-name-errors error">
+                    @for (error of registerForm.userName().errors(); track error.kind) {
+                    <span>{{ error.message}}</span>
+                    }
+                </div>
+                }
             </div>
 
             <div class="register__form-email-wrapper mb-8">
-                <input class="register__form-email-input form-input" type="text" placeholder="Email">
+                <input class="register__form-email-input form-input" type="email" placeholder="Email"
+                    [formField]="registerForm.email">
+
+                @if (registerForm.email().invalid() && registerForm.email().touched()) {
+                <div class="register__form-email-errors error">
+                    @for (error of registerForm.email().errors(); track error.kind) {
+                    <span>{{ error.message}}</span>
+                    }
+                </div>
+                }
             </div>
 
             <div class="register__form-password-wrapper mb-16">
-                <input class="register__form-password-input form-input" type="text" placeholder="Password">
+                <input class="register__form-password-input form-input" type="password" placeholder="Password"
+                    [formField]="registerForm.password">
+
+                @if (registerForm.password().invalid() && registerForm.password().touched()) {
+                <div class="register__form-password-errors error">
+                    @for (error of registerForm.password().errors(); track error.kind) {
+                    <span>{{ error.message}}</span>
+                    }
+                </div>
+                }
             </div>
 
             <div class="register__form-submit-wrapper mb-2">
-                <button class="register__form-submit form-submit w-full" type="submit">
+                <button class="register__form-submit form-submit w-full" type="submit"
+                    [disabled]="registerForm().invalid()">
                     Submit
                 </button>
             </div>

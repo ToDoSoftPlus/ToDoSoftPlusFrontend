@@ -31,3 +31,14 @@
         background-color: #1d4749;
     }
 }
+
+.error {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+
+    span {
+        font-size: 12px;
+        color: #BE1A1A;
+    }
+}
