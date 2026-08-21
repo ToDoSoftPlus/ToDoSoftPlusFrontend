@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
 import { TodoSidebarList } from '../../components/todo-sidebar-list/todo-sidebar-list';
 import { ToDoSidebarList } from '../../models/todo-sidebar-list.model';
-import { TodoItemList } from '../../components/todo-item-list/todo-item-list';
-import { ToDoItem } from '../../../../core/models/todo-item.model';
 import { TODO_LISTS } from '../../data/mock-todo.data';
 import { TodoListView } from '../../components/todo-list-view/todo-list-view';
-import { ToDoList } from '../../../../core/models/todo-list.model';
+import { ToDoList } from '../../../../core/models/todos/todo-list.model';
 
 @Component({
   selector: 'app-todo-page',
