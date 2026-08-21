@@ -1,21 +1,32 @@
-<section class="register__container">
-    <form class="register__form" action="">
-        <div class="register__form-name-wrapper">
-            <input class="register__form-name-input" type="text" placeholder="Enter username">
+<section class="register flex flex-col h-full">
+    <div class="register__container p-16 m-auto">
+        <div class="register__title-wrapper justify-self-center mb-16">
+            <h1 class="register__title font-bold text-3xl">Register</h1>
         </div>
 
-        <div class="register__form-email-wrapper">
-            <input class="register__form-email-input" type="text" placeholder="Enter email">
-        </div>
+        <form class="register__form" action="">
+            <div class="register__form-name-wrapper mb-8">
+                <input class="register__form-name-input form-input" type="text" placeholder="Username">
+            </div>
 
-        <div class="register__form-password-wrapper">
-            <input class="register__form-password-input" type="text" placeholder="Enter password">
-        </div>
+            <div class="register__form-email-wrapper mb-8">
+                <input class="register__form-email-input form-input" type="text" placeholder="Email">
+            </div>
 
-        <div class="register__form-submit-wrapper">
-            <button class="register__form-submit" type="submit">
-                Підтвердити
-            </button>
-        </div>
-    </form>
+            <div class="register__form-password-wrapper mb-16">
+                <input class="register__form-password-input form-input" type="text" placeholder="Password">
+            </div>
+
+            <div class="register__form-submit-wrapper mb-2">
+                <button class="register__form-submit form-submit w-full" type="submit">
+                    Submit
+                </button>
+            </div>
+
+            <div class="register__form-login-wrapper flex gap-1 justify-self-center">
+                <p class="register__form-login-text text-sm">Already have an account?</p>
+                <a class="register__form-login-link text-sm text-blue-500" href="/login">Log in</a>
+            </div>
+        </form>
+    </div>
 </section>
