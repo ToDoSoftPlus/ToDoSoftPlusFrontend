@@ -1,0 +1,19 @@
+.todo-sidebar-list {
+    width: 280px;
+    border-radius: 4px;
+    transition: background-color ease-in-out 200ms;
+
+    &:hover {
+        background-color: #f5f5f5;
+    }
+
+    &__count {
+        &-wrapper {
+            width: 1px;
+            height: 1px;
+            padding: 10px;
+            border-radius: 50%;
+            background-color: #e6dddd;
+        }
+    }    
+}

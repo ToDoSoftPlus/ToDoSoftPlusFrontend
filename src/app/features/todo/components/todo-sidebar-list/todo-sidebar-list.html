@@ -1,8 +1,8 @@
-<div class="todo-sidebar-list">
-    <img class="todo-sidebar-list__image" src="" alt="">
-    <p class="todo-sidebar-list__text">{{toDoSidebarList().title}}</p>
-    <div class="todo-sidebar-list__count-wrapper">
-        <p class="todo-sidebar-list__count-text">
+<div class="todo-sidebar-list flex items-center my-2 py-1">
+    <img class="todo-sidebar-list__image mr-2" src="ListIcon.png" alt="List icon" width="28px">
+    <p class="todo-sidebar-list__text text-sm">{{toDoSidebarList().title}}</p>
+    <div class="todo-sidebar-list__count-wrapper flex justify-center items-center ml-auto mr-2">
+        <p class="todo-sidebar-list__count-text text-xs">
             {{toDoSidebarList().countItems}}
         </p>
     </div>
