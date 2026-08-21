@@ -1,21 +1,25 @@
-<div class="todo-list-view__container">
-    <div class="todo-list-view__header">
-        <div class="todo-list-view__header-title-wrapper">
-            <img class="todo-list-view__header-title-image" src="" alt="">
-            <p class="todo-list-view__header-title-text"></p>
+<div class="todo-list-view__container flex flex-col h-full px-7 py-11">
+    <div class="todo-list-view__header-wrapper flex mb-7">
+        <img class="todo-list-view__header-image" src="ListIcon.png" alt="" width="48px">
+        <div class="todo-list-view__header-text-wrapper">
+            <p class="todo-list-view__header-text-title font-bold text-xl">{{toDoList().title}}</p>
+            <p class="todo-list-view__header-text-description text-gray-600 text-sm">{{toDoList().description}}</p>
         </div>
+    </div>
 
-        <div class="todo-list-view__item-list-wrapper">
-            @for (item of toDoList().toDoItems; track item.id) {
-                <app-todo-item-list [toDoItem]="item"/>
-            }
-        </div>
+    <div class="todo-list-view__item-list-wrapper flex flex-col gap-2">
+        @for (item of toDoList().toDoItems; track item.id) {
+        <app-todo-item-list [toDoItem]="item" />
+        }
+    </div>
 
-        <div class="todo-list-view__actions-wrapper">
-            <div class="todo-list-view__actions-add">
-                <img class="todo-list-view__actions-add-image" src="" alt="">
-                <input class="todo-list-view__actions-add-input" type="text" name="todo-item-title" id="todo-item-title">
-            </div>
+    <div class="todo-list-view__actions-wrapper mt-auto">
+        <div class="todo-list-view__actions-add flex items-center gap-2 p-2">
+            <img class="todo-list-view__actions-add-image" src="AddIcon.svg" alt="" width="24px">
+            <form class="todo-list-view__actions-add-form w-full" action="">
+                <input class="todo-list-view__actions-add-input w-full" type="text" name="todo-item-title"
+                    placeholder="Додайте завдання" id="todo-item-title">
+            </form>
         </div>
     </div>
 </div>
