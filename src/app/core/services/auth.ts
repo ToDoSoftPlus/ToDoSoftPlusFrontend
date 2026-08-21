@@ -29,30 +29,22 @@ export class AuthSevice {
         );
     }
 
-    login(request: LoginRequest): void {
-        this.http.post<AuthResponse>(
+    login(request: LoginRequest): Observable<AuthResponse> {
+        return this.http.post<AuthResponse>(
             `${this.apiUrl}/v1/auth/login`,
-            request,
-            {
-                withCredentials: true,
-            }
-        ).subscribe({
-            next: response => {
+            request
+        ).pipe(
+            tap(response => {
                 this.setAccessToken(response.accessToken, response.accessTokenExpiresAt);
                 this.currentUser.set(response.userInfo);
-            },
-            error: error => console.log(error)
-        })
+            })
+        );
     }
 
     logout(): void {
         localStorage.removeItem("access_token");
         localStorage.removeItem("access_token_expire");
         this.currentUser.set(null);
-    }
-
-    getToken(): string | null {
-        return localStorage.getItem("access_token");
     }
 
     async getCurrentUserInfo(): Promise<UserInfo | null | undefined> {
@@ -69,7 +61,7 @@ export class AuthSevice {
         }
 
         const user = await firstValueFrom(
-            this.http.get<UserInfo>(`${this.apiUrl}/v1/user/me`)
+            this.http.get<UserInfo>(`${this.apiUrl}/v1/user/me`, { withCredentials: true })
         );
 
         this.currentUser.set(user);
@@ -78,15 +70,22 @@ export class AuthSevice {
     }
 
     isAuthenticated(): boolean {
-        if (this.getToken() == null) {
+        const access_token = this.getToken();
+        const access_token_expire = localStorage.getItem("access_token_expire");
+
+        if (!access_token || !access_token_expire) {
             return false;
         }
 
-        return true
+        return new Date(access_token_expire).getTime() > Date.now();
     }
 
     private setAccessToken(accessToken: string, expiresAt: string): void {
         localStorage.setItem("access_token", accessToken);
         localStorage.setItem("access_token_expire", expiresAt);
+    }
+
+    getToken(): string | null {
+        return localStorage.getItem("access_token");
     }
 }
