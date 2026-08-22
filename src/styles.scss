@@ -1,3 +1,44 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import "tailwindcss";
+
+.form-input {
+    width: 300px;
+    outline: none;
+    border-bottom: 1px solid #c2d1c3;
+    padding-bottom: 8px;
+    transition: border-bottom-color ease-in-out 150ms;
+
+    &:focus {
+        border-bottom-color: #3874FF;
+    }
+
+    &::placeholder {
+        color: #939993;
+    }
+}
+
+.form-submit {
+    background-color: #215E61;
+    padding: 16px;
+    border-radius: 8px;
+    transition: background-color ease-in-out 100ms;
+    color: #f7f6f6;
+
+    &:hover {
+        background-color: #307074;
+    }
+
+    &:focus {
+        background-color: #1d4749;
+    }
+}
+
+.error {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+
+    span {
+        font-size: 12px;
+        color: #BE1A1A;
+    }
+}

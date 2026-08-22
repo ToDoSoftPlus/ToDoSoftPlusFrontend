@@ -50,4 +50,23 @@
             }
         }
     }
+
+    &__user-logout {
+
+        &-button {
+            background-color: #C5B3D3;
+            border-radius: 8px;
+            border: 1px solid #b19ac2;
+
+            &:hover {
+                background-color: #d5c4e2;
+
+            }
+
+            &:focus {
+                background-color: #ad93c0;
+            }
+        }
+
+    }
 }

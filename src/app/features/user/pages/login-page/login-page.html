@@ -1,0 +1,32 @@
+<section class="login flex flex-col h-full">
+    <div class="login__container p-16 m-auto">
+        <div class="login__title-wrapper justify-self-center mb-16">
+            <h1 class="login__title font-bold text-3xl">Login</h1>
+        </div>
+
+        <form class="login__form" (submit)="onSubmit($event)">
+            <div class="login__form-email-wrapper mb-8">
+                <input class="login__form-email-input form-input" type="email" placeholder="Email"
+                    [formField]="loginForm.email">
+            </div>
+
+            <div class="login__form-password-wrapper mb-16">
+                <input class="login__form-password-input form-input" type="password" placeholder="Password"
+                    [formField]="loginForm.password">
+            </div>
+
+            <div class="login__form-submit-wrapper mb-2">
+                <button class="login__form-submit form-submit w-full" type="submit" [disabled]="loginForm().invalid()">
+                    Submit
+                </button>
+            </div>
+
+            <div class="login__form-login-wrapper flex gap-1 justify-self-center">
+                <p class="login__form-register-text text-sm">Don`t have an account?</p>
+                <a class="login__form-register-link text-sm text-blue-500" href="/register">Register</a>
+            </div>
+        </form>
+    </div>
+</section>
+
+<app-status-notification [notification]="statusNotification()" (closed)="statusNotification.set(null)" />
