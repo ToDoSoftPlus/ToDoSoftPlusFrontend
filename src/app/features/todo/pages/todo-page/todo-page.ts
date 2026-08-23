@@ -7,6 +7,8 @@ import { ToDoList } from '../../../../core/models/todos/todo-list.model';
 import { AuthSevice } from '../../../../core/services/auth';
 import { Router } from '@angular/router';
 import { UserInfo } from '../../../../core/models/user/user-info.model';
+import { TodoListService } from '../../../../core/services/todo-list';
+import { PagedResponse } from '../../../../core/models/common/paged-response.model';
 
 @Component({
   selector: 'app-todo-page',
@@ -17,11 +19,25 @@ import { UserInfo } from '../../../../core/models/user/user-info.model';
 })
 export class TodoPage implements OnInit {
   authService = inject(AuthSevice);
+  todoListService = inject(TodoListService);
   router = inject(Router);
   currentUser = signal<UserInfo | undefined | null>(undefined);
 
+  toDoSidebarUserLists = signal<PagedResponse<ToDoSidebarList> | undefined | null>(undefined);
+
+  page = signal<number>(1);
+  private pageSize = 10;
+
   async ngOnInit(): Promise<void> {
     this.currentUser.set(await this.authService.getCurrentUserInfo());
+
+    await this.todoListService.getUserSidebarLists({
+      page: this.page(), pageSize: this.pageSize
+    }).subscribe({
+      next: response => {
+        this.toDoSidebarUserLists.set(response);
+      }
+    });
   }
 
   currentListId: number = 1;
@@ -29,17 +45,10 @@ export class TodoPage implements OnInit {
   currentList: ToDoList = TODO_LISTS.find(list => list.id) ?? TODO_LISTS[0];
 
   toDoSidebarSystemLists: ToDoSidebarList[] = [
-    { id: 1, title: "list1-s", countItems: 1, imageUrl: undefined },
-    { id: 2, title: "list2-s", countItems: 10, imageUrl: undefined },
-    { id: 3, title: "list3-s", countItems: 100, imageUrl: undefined },
+    { id: 1, title: "list1-s", countItems: 1 },
+    { id: 2, title: "list2-s", countItems: 10 },
+    { id: 3, title: "list3-s", countItems: 100 },
   ]
-
-  toDoSidebarUserLists: ToDoSidebarList[] = TODO_LISTS.map(list => ({
-    id: list.id,
-    title: list.title,
-    countItems: list.toDoItems?.length ?? 0,
-    imageUrl: undefined
-  }));
 
   exitButtonClickHandler() {
     this.authService.logout();

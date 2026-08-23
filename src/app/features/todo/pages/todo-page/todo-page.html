@@ -1,3 +1,5 @@
+@let response = toDoSidebarUserLists();
+
 <div class="todo-page flex flex-row h-full">
     <div class="todo-sidebar px-5 flex flex-col mt-5">
         <div class="todo-sidebar__user-wrapper flex flex-row mb-4">
@@ -31,11 +33,14 @@
 
         <hr />
 
+        @if (response) {
         <div class="todo-sidebar__user-lists-wrapper">
-            @for (userList of toDoSidebarUserLists; track userList.id) {
+            @for (userList of response.items; track userList.id) {
             <app-todo-sidebar-list [toDoSidebarList]="userList" />
             }
         </div>
+        }
+
 
         <div class="todo-sidebar__actions-wrapper mt-auto mb-6">
             <button class="todo-sidebar__actions-add-list flex gap-3 p-2" type="button">
