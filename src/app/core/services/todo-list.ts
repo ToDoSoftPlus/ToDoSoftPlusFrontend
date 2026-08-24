@@ -32,4 +32,8 @@ export class TodoListService {
             request
         );
     }
+
+    getListById(id: number): Observable<ToDoList> {
+        return this.http.get<ToDoList>(`${this.apiUrl}/v1/todo-list/${id}`);
+    }
 }

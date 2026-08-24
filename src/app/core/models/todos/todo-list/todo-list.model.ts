@@ -7,7 +7,7 @@ export interface ToDoList {
     createdAt: number,
     updatedetAt: number,
     userId: number,
-    toDoItems: Array<ToDoItem> | null
+    toDoItemsList: Array<ToDoItem> | null
 }
 
 export interface CreateToDoListRequest {

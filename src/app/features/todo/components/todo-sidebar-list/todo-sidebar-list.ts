@@ -12,7 +12,9 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 export class TodoSidebarList {
   toDoSidebarList = input.required<ToDoSidebarList>();
   isEditing = input<boolean>(false);
-
+  isActive = input<boolean>(false);
+  
+  onListClick = output<void>();
   OnEdit = output<string>();
   OnEditCancel = output<void>();
   

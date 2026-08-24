@@ -2,13 +2,13 @@
     <div class="todo-list-view__header-wrapper flex mb-7">
         <img class="todo-list-view__header-image" src="ListIcon.png" alt="" width="48px">
         <div class="todo-list-view__header-text-wrapper">
-            <p class="todo-list-view__header-text-title font-bold text-xl">{{toDoList().title}}</p>
-            <p class="todo-list-view__header-text-description text-gray-600 text-sm">{{toDoList().description}}</p>
+            <p class="todo-list-view__header-text-title font-bold text-xl">{{toDoList()?.title}}</p>
+            <p class="todo-list-view__header-text-description text-gray-600 text-sm">{{toDoList()?.description}}</p>
         </div>
     </div>
 
     <div class="todo-list-view__item-list-wrapper flex flex-col gap-2">
-        @for (item of toDoList().toDoItems; track item.id) {
+        @for (item of toDoList()?.toDoItemsList; track item.id) {
         <app-todo-item-list [toDoItem]="item" />
         }
     </div>

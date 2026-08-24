@@ -1,7 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { TodoSidebarList } from '../../components/todo-sidebar-list/todo-sidebar-list';
 import { ToDoSidebarList } from '../../models/todo-sidebar-list.model';
-import { TODO_LISTS } from '../../data/mock-todo.data';
 import { TodoListView } from '../../components/todo-list-view/todo-list-view';
 import { AuthSevice } from '../../../../core/services/auth';
 import { Router } from '@angular/router';
@@ -29,13 +28,10 @@ export class TodoPage implements OnInit {
   currentUser = signal<UserInfo | undefined | null>(undefined);
   toDoSidebarUserResponse = signal<PagedResponse<ToDoSidebarList> | undefined | null>(undefined);
   toDoSidebarEditingListId = signal<number>(-1);
+  toDoCurrentSidebarListId = signal<number | undefined>(undefined);
 
   page = signal<number>(1);
   private pageSize = 10;
-
-  currentListId = signal<number | undefined>(this.toDoSidebarUserResponse()?.items[0].id);
-
-  currentList: ToDoList = TODO_LISTS.find(list => list.id) ?? TODO_LISTS[0];
 
   toDoSidebarSystemLists: ToDoSidebarList[] = [
     { id: 1, title: "list1-s", countItems: 1 },
@@ -51,6 +47,7 @@ export class TodoPage implements OnInit {
     }).subscribe({
       next: response => {
         this.toDoSidebarUserResponse.set(response);
+        this.toDoCurrentSidebarListId.set(response.items[0].id);
       }
     });
   }
@@ -148,5 +145,9 @@ export class TodoPage implements OnInit {
         )
       };
     });
+  }
+
+  listClick(listId: number) {
+    this.toDoCurrentSidebarListId.set(listId);
   }
 }

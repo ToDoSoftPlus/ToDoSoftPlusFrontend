@@ -1,6 +1,22 @@
 .todo-sidebar-list {
     border-radius: 4px;
     transition: background-color ease-in-out 200ms;
+    cursor: pointer;
+    position: relative;
+    padding-left: 6px;
+
+    &.active {
+        &::after {
+            content: '';
+            position: absolute;
+            top: 25%;
+            left: 0;
+            height: 50%;
+            width: 3px;
+            background: #3874FF;
+            border-radius: 4px;
+        }
+    }
 
     &:hover {
         background-color: #f5f5f5;

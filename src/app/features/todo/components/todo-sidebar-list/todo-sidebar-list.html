@@ -1,4 +1,4 @@
-<div class="todo-sidebar-list flex items-center my-2 py-1">
+<div class="todo-sidebar-list flex items-center my-2 py-1" [class.active]="isActive()" (click)="onListClick.emit()">
     <img class="todo-sidebar-list__image mr-2" src="ListIcon.png" alt="List icon" width="28px">
     @if (isEditing()) {
     <form class="todo-sidebar-list__form" [formGroup]="form" (ngSubmit)="save()" (keydown.escape)="OnEditCancel.emit()">

@@ -7,7 +7,7 @@ export const TODO_LISTS: ToDoList[] = [
         id: 1,
         title: "list1",
         description: "description1",
-        toDoItems: [
+        toDoItemsList: [
             {
                 id: 1,
                 title: "item1",
@@ -43,7 +43,7 @@ export const TODO_LISTS: ToDoList[] = [
         id: 2,
         title: "list2",
         description: "description2",
-        toDoItems: [
+        toDoItemsList: [
             {
                 id: 3,
                 title: "item1",
@@ -79,7 +79,7 @@ export const TODO_LISTS: ToDoList[] = [
         id: 3,
         title: "list3",
         description: "description3",
-        toDoItems: [
+        toDoItemsList: [
             {
                 id: 5,
                 title: "item1",
