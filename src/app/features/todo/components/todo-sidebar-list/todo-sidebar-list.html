@@ -1,11 +1,5 @@
 <div class="todo-sidebar-list flex items-center my-2 py-1" [class.active]="isActive()" (click)="onListClick.emit()">
     <img class="todo-sidebar-list__image mr-2" src="ListIcon.png" alt="List icon" width="28px">
-    @if (isEditing()) {
-    <form class="todo-sidebar-list__form" [formGroup]="form" (ngSubmit)="save()" (keydown.escape)="OnEditCancel.emit()">
-        <input class="todo-sidebar-list__input-title" #titleInput type="text" formControlName="title" required
-            (blur)="OnEditCancel.emit()" minlength="3" maxlength="100">
-    </form>
-    } @else {
     <p class="todo-sidebar-list__text text-sm">{{toDoSidebarList().title}}</p>
 
     @if (toDoSidebarList().countItems > 0) {
@@ -14,6 +8,5 @@
             {{toDoSidebarList().countItems}}
         </p>
     </div>
-    }
     }
 </div>

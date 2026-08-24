@@ -11,11 +11,13 @@ import { CreateToDoListRequest, ToDoList } from '../../../../core/models/todos/t
 import { ErrorResponse } from '../../../../core/models/common/error-response.model';
 import { StatusNotificationData } from '../../../../shared/models/status-notification.model';
 import { StatusNotification } from "../../../../shared/components/status-notification/status-notification";
+import { CreateToDoSidebarList } from '../../components/create-todo-sidebar-list/create-todo-sidebar-list';
+import { CreateToDoSidebarListModel } from '../../models/create-todo-sidebar-list.model';
 
 @Component({
   selector: 'app-todo-page',
   standalone: true,
-  imports: [TodoSidebarList, TodoListView, StatusNotification],
+  imports: [TodoSidebarList, CreateToDoSidebarList, TodoListView, StatusNotification],
   templateUrl: './todo-page.html',
   styleUrl: './todo-page.scss',
 })
@@ -26,9 +28,10 @@ export class TodoPage implements OnInit {
   statusNotification = signal<StatusNotificationData | null>(null);
 
   currentUser = signal<UserInfo | undefined | null>(undefined);
-  toDoSidebarUserResponse = signal<PagedResponse<ToDoSidebarList> | undefined | null>(undefined);
-  toDoSidebarEditingListId = signal<number>(-1);
-  toDoCurrentSidebarListId = signal<number | undefined>(undefined);
+  sidebarListResponse = signal<PagedResponse<ToDoSidebarList> | undefined | null>(undefined);
+  sidebarListEditingListId = signal<number>(-1);
+  currentSidebarListId = signal<number | undefined>(undefined);
+  isCreateSidebarList = signal<boolean>(false);
 
   page = signal<number>(1);
   private pageSize = 10;
@@ -39,96 +42,47 @@ export class TodoPage implements OnInit {
     { id: 3, title: "list3-s", countItems: 100 },
   ]
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    this.currentUser.set(await this.authService.getCurrentUserInfo());
     this.loadLists(true);
   }
 
   loadLists(selectedFirst = false): void {
-    this.currentUser.set(this.authService.getCurrentUserInfo());
-
     this.todoListService.getUserSidebarLists({
       page: this.page(), pageSize: this.pageSize
     }).subscribe({
       next: response => {
-        this.toDoSidebarUserResponse.set(response);
+        this.sidebarListResponse.set(response);
 
         if (selectedFirst) {
-          this.toDoCurrentSidebarListId.set(response.items[0].id);
+          this.currentSidebarListId.set(response.items[0].id);
         }
       }
     });
   };
 
-  exitButtonClickHandler() {
+  onUserExitButtonClick() {
     this.authService.logout();
     this.router.navigate(["/login"]);
   };
 
-  createTempSidebarList() {
-    const tempList: ToDoSidebarList = {
-      id: -Date.now(),
-      title: '',
-      countItems: 0
-    };
-
-    this.toDoSidebarUserResponse.update(response => {
-      if (!response)
-        return response;
-
-      this.toDoSidebarEditingListId.set(tempList.id);
-
-      const newTotalCount = response.totalCount + 1;
-      const items = [
-        ...response.items,
-        tempList
-      ].slice(0, response.pageSize);
-
-      return {
-        ...response,
-        items,
-        totalCount: newTotalCount,
-        totalPages: Math.ceil(newTotalCount / response.pageSize),
-        hasNext: response.page < Math.ceil(
-          newTotalCount / response.pageSize
-        ),
-        hasPrevious: response.page > 1
-      };
-    })
+  onCreateList(): void {
+    this.isCreateSidebarList.set(true);
   }
 
-  saveTempSidebarList(list: ToDoSidebarList, title: string) {
+  onCreateListSubmit(model: CreateToDoSidebarListModel): void {
     const request: CreateToDoListRequest = {
-      title: title.trim(),
+      title: model.title,
       description: null
     };
 
     this.todoListService.createList(request).subscribe({
-      next: (response: ToDoList) => {
-        this.toDoSidebarUserResponse.update(listResponse => {
-          if (!listResponse) {
-            return listResponse;
-          }
-
-          this.toDoSidebarEditingListId.set(-1);
-
-          return {
-            ...listResponse,
-
-            items: listResponse.items.map(item =>
-              item.id === list.id
-                ? {
-                  ...item,
-                  id: response.id,
-                  title: response.title,
-                  countItems: 0
-                }
-                : item
-            )
-          };
-        })
+      next: response => {
+        this.loadLists(false);
+        this.isCreateSidebarList.set(false);
       },
       error: error => {
-        this.cancelTempSidebarList(list);
+        this.onCreateListCancel();
         const errorResponse = error.error as ErrorResponse;
         this.statusNotification.set({
           type: 'error',
@@ -139,23 +93,12 @@ export class TodoPage implements OnInit {
     })
   }
 
-  cancelTempSidebarList(list: ToDoSidebarList) {
-    this.toDoSidebarUserResponse.update(listResponse => {
-      if (!listResponse) {
-        return listResponse;
-      }
-
-      return {
-        ...listResponse,
-        items: listResponse.items.filter(
-          item => item.id !== list.id
-        )
-      };
-    });
+  onCreateListCancel(): void {
+    this.isCreateSidebarList.set(false);
   }
 
-  listClick(listId: number) {
-    this.toDoCurrentSidebarListId.set(listId);
+  onListClick(listId: number) {
+    this.currentSidebarListId.set(listId);
   }
 
   onListDelete(listId: number) {

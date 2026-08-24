@@ -1,4 +1,4 @@
-@let response = toDoSidebarUserResponse();
+@let response = sidebarListResponse();
 
 <div class="todo-page flex flex-row h-full">
     <div class="todo-sidebar px-5 flex flex-col mt-5">
@@ -9,7 +9,7 @@
                 <p class="todo-sidebar__user-info-gmail text-sm text-gray-500">{{currentUser()?.email}}</p>
             </div>
             <div class="todo-sidebar__user-logout-wrapper m-auto">
-                <button class="todo-sidebar__user-logout-button py-1 px-4" (click)="exitButtonClickHandler()">
+                <button class="todo-sidebar__user-logout-button py-1 px-4" (click)="onUserExitButtonClick()">
                     Exit
                 </button>
             </div>
@@ -36,20 +36,20 @@
         @if (response) {
         <div class="todo-sidebar__user-lists-wrapper">
             @for (userList of response.items; track userList.id) {
-            @if (toDoSidebarEditingListId() === userList.id ) {
-            <app-todo-sidebar-list [toDoSidebarList]="userList" [isEditing]="true"
-                (OnEdit)="saveTempSidebarList(userList, $event)" (OnEditCancel)="cancelTempSidebarList(userList)" />
-            } @else {
-            <app-todo-sidebar-list [toDoSidebarList]="userList" [isActive]="toDoCurrentSidebarListId() === userList.id"
-                (onListClick)="listClick(userList.id)" />
-            }}
+            <app-todo-sidebar-list [toDoSidebarList]="userList" [isActive]="currentSidebarListId() === userList.id"
+                (onListClick)="onListClick(userList.id)" />
+            }
+
+            @if (isCreateSidebarList()) {
+            <app-create-todo-sidebar-list (onSubmit)="onCreateListSubmit($event)" (onCancel)="onCreateListCancel()" />
+            }
         </div>
         }
 
 
         <div class="todo-sidebar__actions-wrapper mt-auto mb-6">
             <button class="todo-sidebar__actions-add-list flex gap-3 p-2" type="button"
-                (click)="createTempSidebarList()">
+                (click)="onCreateList()">
                 <img class="todo-sidebar__actions-add-list-image" src="AddIcon.svg" alt="Add icon" width="24px">
                 <p class="todo-sidebar__actions-add-list-text">Створити список</p>
             </button>
@@ -57,8 +57,8 @@
     </div>
 
     <section class="todo-container w-full h-full">
-        <app-todo-list-view [toDoListId]="toDoCurrentSidebarListId() ?? -1"
-            (onListDelete)="onListDelete(toDoCurrentSidebarListId() ?? -1)" />
+        <app-todo-list-view [toDoListId]="currentSidebarListId() ?? -1"
+            (onListDelete)="onListDelete(currentSidebarListId() ?? -1)" />
     </section>
 </div>
 
