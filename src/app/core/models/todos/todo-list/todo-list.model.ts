@@ -1,4 +1,4 @@
-import { ToDoItem } from "./todo-item.model";
+import { ToDoItem } from "../todo-item/todo-item.model";
 
 export interface ToDoList {
     id: number,
@@ -8,4 +8,9 @@ export interface ToDoList {
     updatedetAt: number,
     userId: number,
     toDoItems: Array<ToDoItem> | null
+}
+
+export interface CreateToDoListRequest {
+    title: string,
+    description: string | null,
 }

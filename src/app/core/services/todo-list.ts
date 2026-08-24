@@ -1,11 +1,11 @@
 import { Injectable, Service } from '@angular/core';
 import { environment } from '../../../environments/environment.local';
-import { ToDoList } from '../models/todos/todo-list.model';
 import { firstValueFrom, Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { PagedResponse } from '../models/common/paged-response.model';
 import { PaginationRequest } from '../models/common/pagination-request.model';
 import { ToDoSidebarList } from '../../features/todo/models/todo-sidebar-list.model';
+import { CreateToDoListRequest, ToDoList } from '../models/todos/todo-list/todo-list.model';
 
 @Injectable({
     providedIn: "root"
@@ -24,5 +24,12 @@ export class TodoListService {
             `${this.apiUrl}/v1/todo-list/sidebar`,
             { params: params }
         )
+    }
+    
+    createList(request: CreateToDoListRequest): Observable<ToDoList> {
+        return this.http.post<ToDoList>(
+            `${this.apiUrl}/v1/todo-list`,
+            request
+        );
     }
 }

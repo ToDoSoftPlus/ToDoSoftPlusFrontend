@@ -1,4 +1,4 @@
-import { ToDoSubItem } from "./todo-sub-item.model";
+import { ToDoSubItem } from "../tood-sub-item/todo-sub-item.model";
 
 export interface ToDoItem {
     id: number,

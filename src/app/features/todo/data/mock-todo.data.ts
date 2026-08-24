@@ -1,4 +1,4 @@
-import { ToDoList } from "../../../core/models/todos/todo-list.model";
+import { ToDoList } from "../../../core/models/todos/todo-list/todo-list.model";
 
 export const USERID: number = 1;
 

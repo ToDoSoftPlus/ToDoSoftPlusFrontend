@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { TodoItemList } from '../todo-item-list/todo-item-list';
-import { ToDoList } from '../../../../core/models/todos/todo-list.model';
+import { ToDoList } from '../../../../core/models/todos/todo-list/todo-list.model';
 
 @Component({
   selector: 'app-todo-list-view',
