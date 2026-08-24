@@ -5,6 +5,10 @@
             <p class="todo-list-view__header-text-title font-bold text-xl">{{toDoList()?.title}}</p>
             <p class="todo-list-view__header-text-description text-gray-600 text-sm">{{toDoList()?.description}}</p>
         </div>
+        <div class="todo-list-view__actions">
+            <button class="todo-list-actions-edit" (click)="onListEdit.emit()">Edit list</button>
+            <button class="todo-list-actions-delete" (click)="onListDelete.emit()">Delete list</button>
+        </div>
     </div>
 
     <div class="todo-list-view__item-list-wrapper flex flex-col gap-2">

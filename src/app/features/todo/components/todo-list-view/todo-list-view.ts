@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, input, OnInit, output, signal } from '@angular/core';
 import { TodoItemList } from '../todo-item-list/todo-item-list';
 import { ToDoList } from '../../../../core/models/todos/todo-list/todo-list.model';
 import { TodoListService } from '../../../../core/services/todo-list';
@@ -12,6 +12,9 @@ import { TodoListService } from '../../../../core/services/todo-list';
 export class TodoListView {
   toDoListId = input.required<number>();
 
+  onListDelete = output<void>();
+  onListEdit = output<void>();
+
   toDoListService = inject(TodoListService);
 
   toDoList = signal<ToDoList | undefined>(undefined);
@@ -19,7 +22,6 @@ export class TodoListView {
   constructor() {
     effect(() => {
       const listId = this.toDoListId();
-
       this.loadList();
     })
   }

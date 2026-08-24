@@ -57,7 +57,8 @@
     </div>
 
     <section class="todo-container w-full h-full">
-        <app-todo-list-view [toDoListId]="toDoCurrentSidebarListId() ?? -1" />
+        <app-todo-list-view [toDoListId]="toDoCurrentSidebarListId() ?? -1"
+            (onListDelete)="onListDelete(toDoCurrentSidebarListId() ?? -1)" />
     </section>
 </div>
 

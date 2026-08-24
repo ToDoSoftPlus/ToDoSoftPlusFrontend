@@ -47,7 +47,7 @@ export class AuthSevice {
         this.currentUser.set(null);
     }
 
-    async getCurrentUserInfo(): Promise<UserInfo | null | undefined> {
+    getCurrentUserInfo(): UserInfo | null | undefined {
         const currentUser = this.currentUser();
 
         if (currentUser) {
@@ -60,13 +60,13 @@ export class AuthSevice {
             return null;
         }
 
-        const user = await firstValueFrom(
-            this.http.get<UserInfo>(`${this.apiUrl}/v1/user/me`, { withCredentials: true })
-        );
+        this.http.get<UserInfo>(`${this.apiUrl}/v1/user/me`, { withCredentials: true }).subscribe({
+            next: response => {
+                this.currentUser.set(response);
+            }
+        })
 
-        this.currentUser.set(user);
-
-        return user;
+        return currentUser;
     }
 
     isAuthenticated(): boolean {

@@ -5,7 +5,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { PagedResponse } from '../models/common/paged-response.model';
 import { PaginationRequest } from '../models/common/pagination-request.model';
 import { ToDoSidebarList } from '../../features/todo/models/todo-sidebar-list.model';
-import { CreateToDoListRequest, ToDoList } from '../models/todos/todo-list/todo-list.model';
+import { CreateToDoListRequest, ToDoList, UpdateToDoListRequest } from '../models/todos/todo-list/todo-list.model';
 
 @Injectable({
     providedIn: "root"
@@ -35,5 +35,16 @@ export class TodoListService {
 
     getListById(id: number): Observable<ToDoList> {
         return this.http.get<ToDoList>(`${this.apiUrl}/v1/todo-list/${id}`);
+    }
+
+    deleteList(id: number) {
+        return this.http.delete(`${this.apiUrl}/v1/todo-list/${id}`);
+    }
+
+    updateList(request: UpdateToDoListRequest): Observable<ToDoList> {
+        return this.http.put<ToDoList>(
+            `${this.apiUrl}/v1/todo-list`,
+            request
+        );
     }
 }

@@ -14,3 +14,9 @@ export interface CreateToDoListRequest {
     title: string,
     description: string | null,
 }
+
+export interface UpdateToDoListRequest {
+    id: number,
+    title: string | null,
+    description: string | null,
+}

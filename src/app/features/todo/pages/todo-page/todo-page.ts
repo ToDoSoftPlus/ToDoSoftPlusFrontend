@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { TodoSidebarList } from '../../components/todo-sidebar-list/todo-sidebar-list';
 import { ToDoSidebarList } from '../../models/todo-sidebar-list.model';
 import { TodoListView } from '../../components/todo-list-view/todo-list-view';
@@ -39,18 +39,25 @@ export class TodoPage implements OnInit {
     { id: 3, title: "list3-s", countItems: 100 },
   ]
 
-  async ngOnInit(): Promise<void> {
-    this.currentUser.set(await this.authService.getCurrentUserInfo());
+  ngOnInit(): void {
+    this.loadLists(true);
+  }
 
-    await this.todoListService.getUserSidebarLists({
+  loadLists(selectedFirst = false): void {
+    this.currentUser.set(this.authService.getCurrentUserInfo());
+
+    this.todoListService.getUserSidebarLists({
       page: this.page(), pageSize: this.pageSize
     }).subscribe({
       next: response => {
         this.toDoSidebarUserResponse.set(response);
-        this.toDoCurrentSidebarListId.set(response.items[0].id);
+
+        if (selectedFirst) {
+          this.toDoCurrentSidebarListId.set(response.items[0].id);
+        }
       }
     });
-  }
+  };
 
   exitButtonClickHandler() {
     this.authService.logout();
@@ -149,5 +156,17 @@ export class TodoPage implements OnInit {
 
   listClick(listId: number) {
     this.toDoCurrentSidebarListId.set(listId);
+  }
+
+  onListDelete(listId: number) {
+    this.todoListService.deleteList(listId).subscribe({
+      next: response => {
+        this.loadLists(true);
+      }
+    });
+  }
+
+  onListEdit(list: ToDoList) {
+
   }
 }
