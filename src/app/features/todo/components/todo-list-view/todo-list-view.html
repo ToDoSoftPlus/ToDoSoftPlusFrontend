@@ -2,11 +2,20 @@
     <div class="todo-list-view__header-wrapper flex mb-7">
         <img class="todo-list-view__header-image" src="ListIcon.png" alt="" width="48px">
         <div class="todo-list-view__header-text-wrapper">
+            @if (isEditList()) {
+            <form class="todo-list-view__edit-form" (submit)="onListEditSubmit($event)">
+                <input class="todo-list-view__edit-input" type="text" [formField]="editListForm.title">
+                <input class="todo-list-view__edit-input" type="text" [formField]="editListForm.description">
+                <button class="todo-list-view__edit-submit" type="submit">Submit</button>
+                <button class="todo-list-view__edit-cancel" type="button" (click)="onListEditCancel()">Cancel</button>
+            </form>
+            } @else {
             <p class="todo-list-view__header-text-title font-bold text-xl">{{toDoList()?.title}}</p>
             <p class="todo-list-view__header-text-description text-gray-600 text-sm">{{toDoList()?.description}}</p>
+            }
         </div>
         <div class="todo-list-view__actions">
-            <button class="todo-list-actions-edit" (click)="onListEdit.emit()">Edit list</button>
+            <button class="todo-list-actions-edit" (click)="onListEditButtonClick()">Edit list</button>
             <button class="todo-list-actions-delete" (click)="onListDelete.emit()">Delete list</button>
         </div>
     </div>

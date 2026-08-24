@@ -46,7 +46,6 @@
         </div>
         }
 
-
         <div class="todo-sidebar__actions-wrapper mt-auto mb-6">
             <button class="todo-sidebar__actions-add-list flex gap-3 p-2" type="button"
                 (click)="onCreateList()">
@@ -58,7 +57,9 @@
 
     <section class="todo-container w-full h-full">
         <app-todo-list-view [toDoListId]="currentSidebarListId() ?? -1"
-            (onListDelete)="onListDelete(currentSidebarListId() ?? -1)" />
+            (onListDelete)="onListDelete(currentSidebarListId() ?? -1)"
+            (onListEdit)="onListEdit($event)"
+            (onListEditError)="onListEditError($event)"/>
     </section>
 </div>
 

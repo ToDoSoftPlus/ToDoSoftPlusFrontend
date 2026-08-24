@@ -66,6 +66,10 @@ export class TodoPage implements OnInit {
     this.router.navigate(["/login"]);
   };
 
+  onListClick(listId: number) {
+    this.currentSidebarListId.set(listId);
+  }
+
   onCreateList(): void {
     this.isCreateSidebarList.set(true);
   }
@@ -97,10 +101,6 @@ export class TodoPage implements OnInit {
     this.isCreateSidebarList.set(false);
   }
 
-  onListClick(listId: number) {
-    this.currentSidebarListId.set(listId);
-  }
-
   onListDelete(listId: number) {
     this.todoListService.deleteList(listId).subscribe({
       next: response => {
@@ -109,7 +109,31 @@ export class TodoPage implements OnInit {
     });
   }
 
-  onListEdit(list: ToDoList) {
+  onListEdit(updatedList: ToDoList): void {
+    this.sidebarListResponse.update(response => {
+      if (!response) {
+        return response;
+      }
 
+      return {
+        ...response,
+        items: response.items.map(item =>
+          item.id === updatedList.id
+            ? {
+              ...item,
+              title: updatedList.title
+            }
+            : item
+        )
+      };
+    });
+  }
+
+  onListEditError(errorResponse: ErrorResponse): void {
+    this.statusNotification.set({
+      type: 'error',
+      message: errorResponse.Message,
+      errors: errorResponse.Errors,
+    });
   }
 }
