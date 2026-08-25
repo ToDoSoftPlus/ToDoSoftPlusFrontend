@@ -17,8 +17,8 @@
 
         <div class="todo-sidebar__search-lists-wrapper mb-4">
             <form class="todo-sidebar__search-lists-form flex items-center" action="">
-                <input class="todo-sidebar__search-lists-input primary-input" type="text" name="search-lists" id="search-lists"
-                    placeholder="Пошук" />
+                <input class="todo-sidebar__search-lists-input primary-input" type="text" name="search-lists"
+                    id="search-lists" placeholder="Пошук" />
                 <button class="todo-sidebar__search-lists-button" type="submit">
                     <img class="todo-sidebar__search-lists-icon" src="SearchIcon.svg" alt="search-icon">
                 </button>
@@ -47,8 +47,7 @@
         }
 
         <div class="todo-sidebar__actions-wrapper mt-auto mb-6">
-            <button class="todo-sidebar__actions-add-list flex gap-3 p-2" type="button"
-                (click)="onCreateList()">
+            <button class="todo-sidebar__actions-add-list flex gap-3 p-2" type="button" (click)="onCreateList()">
                 <img class="todo-sidebar__actions-add-list-image" src="AddIcon.svg" alt="Add icon" width="24px">
                 <p class="todo-sidebar__actions-add-list-text">Створити список</p>
             </button>
@@ -56,10 +55,12 @@
     </div>
 
     <section class="todo-container w-full h-full">
-        <app-todo-list-view [toDoListId]="currentSidebarListId() ?? -1"
-            (onListDelete)="onListDelete(currentSidebarListId() ?? -1)"
-            (onListEdit)="onListEdit($event)"
-            (onListEditError)="onListEditError($event)"/>
+        @if (currentSidebarListId() !== undefined) {
+        <app-todo-list-view [toDoListId]="currentSidebarListId()!"
+            (onListDelete)="onListDelete(currentSidebarListId()!)" (onListEdit)="onListEdit($event)"
+            (onItemCreate)="onItemCreate($event)" (onActionError)="onActionError($event)" />
+        }
+
     </section>
 </div>
 

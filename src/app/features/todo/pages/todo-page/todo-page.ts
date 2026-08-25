@@ -44,7 +44,7 @@ export class TodoPage implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.currentUser.set(await this.authService.getCurrentUserInfo());
-    this.loadLists(true);
+    await this.loadLists(true);
   }
 
   loadLists(selectedFirst = false): void {
@@ -129,7 +129,22 @@ export class TodoPage implements OnInit {
     });
   }
 
-  onListEditError(errorResponse: ErrorResponse): void {
+  onItemCreate(listId: number): void {
+    this.sidebarListResponse.update(response => {
+      if (!response) {
+        return response;
+      }
+
+      return {
+        ...response,
+        items: response.items.map(item => 
+          item.id === listId ? { ...item, countItems: item.countItems + 1} : item
+        )
+      }
+    })
+  }
+
+  onActionError(errorResponse: ErrorResponse): void {
     this.statusNotification.set({
       type: 'error',
       message: errorResponse.Message,

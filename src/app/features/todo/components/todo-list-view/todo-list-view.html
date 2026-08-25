@@ -1,3 +1,6 @@
+@let itemResponse = toDoItems();
+@let list = toDoList();
+
 <div class="todo-list-view__container flex flex-col h-full px-7 py-11">
     <div class="todo-list-view__header-wrapper flex mb-7">
         <img class="todo-list-view__header-image" src="ListIcon.png" alt="" width="48px">
@@ -17,8 +20,8 @@
                 </div>
             </form>
             } @else {
-            <p class="todo-list-view__header-text-title font-bold text-xl">{{toDoList()?.title}}</p>
-            <p class="todo-list-view__header-text-description text-gray-600 text-sm">{{toDoList()?.description}}</p>
+            <p class="todo-list-view__header-text-title font-bold text-xl">{{list?.title}}</p>
+            <p class="todo-list-view__header-text-description text-gray-600 text-sm">{{list?.description}}</p>
             }
         </div>
         <div class="todo-list-view__actions flex gap-1 ml-auto">
@@ -28,18 +31,19 @@
     </div>
 
     <div class="todo-list-view__item-list-wrapper flex flex-col gap-2">
-        @for (item of toDoList()?.toDoItemsList; track item.id) {
+        @for (item of itemResponse?.items; track item.id) {
         <app-todo-item-list [toDoItem]="item" />
         }
     </div>
 
     <div class="todo-list-view__actions-wrapper mt-auto">
         <div class="todo-list-view__actions-add flex items-center gap-2 p-2">
-            <img class="todo-list-view__actions-add-image" src="AddIcon.svg" alt="" width="24px">
-            <form class="todo-list-view__actions-add-form w-full" action="">
-                <input class="todo-list-view__actions-add-input w-full" type="text" name="todo-item-title"
-                    placeholder="Додайте завдання" id="todo-item-title">
+            <img class="todo-list-view__actions-add-image cursor-pointer" src="AddIcon.svg" alt="" width="24px" (click)="onItemCreateSubmit($event)">
+            <form class="todo-list-view__actions-add-form w-full" (submit)="onItemCreateSubmit($event)" (keydown.escape)="onItemCreateClear()">
+                <input class="todo-list-view__actions-add-input w-full" type="text" placeholder="Create task"
+                    [formField]="createItemForm.title">
             </form>
+            <i class="bi bi-x text-xl cursor-pointer" (click)="onItemCreateClear()"></i>
         </div>
     </div>
 </div>

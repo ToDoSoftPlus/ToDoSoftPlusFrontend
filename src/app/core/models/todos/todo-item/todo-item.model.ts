@@ -12,3 +12,12 @@ export interface ToDoItem {
     toDoListId: number,
     toDoSubItems: Array<ToDoSubItem> | null
 }
+
+export interface CreateToDoItemRequest {
+    title: string,
+    description: string | null,
+    isImportant: boolean,
+    isCompleted: boolean,
+    completedAt: Date | null,
+    toDoListId: number
+}
