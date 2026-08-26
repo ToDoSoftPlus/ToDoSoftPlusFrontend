@@ -1,6 +1,7 @@
-import { Component, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { ToDoSidebarList } from '../../models/todo-sidebar-list.model';
 import { ReactiveFormsModule} from '@angular/forms';
+import { TodoStore } from '../../../../core/stores/todo.store';
 
 @Component({
   selector: 'app-todo-sidebar-list',
@@ -9,7 +10,6 @@ import { ReactiveFormsModule} from '@angular/forms';
   styleUrl: './todo-sidebar-list.scss',
 })
 export class TodoSidebarList {
-  toDoSidebarList = input.required<ToDoSidebarList>();
-  isActive = input<boolean>(false);
-  onListClick = output<void>();
+  toDoSidebarList = input.required<ToDoSidebarList>();  
+  todoStore = inject(TodoStore);
 }

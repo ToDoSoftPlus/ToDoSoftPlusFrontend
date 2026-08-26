@@ -6,13 +6,13 @@ import { AuthSevice } from '../../../../core/services/auth';
 import { Router } from '@angular/router';
 import { UserInfo } from '../../../../core/models/user/user-info.model';
 import { TodoListService } from '../../../../core/services/todo-list';
-import { PagedResponse } from '../../../../core/models/common/paged-response.model';
 import { CreateToDoListRequest, ToDoList } from '../../../../core/models/todos/todo-list/todo-list.model';
 import { ErrorResponse } from '../../../../core/models/common/error-response.model';
 import { StatusNotificationData } from '../../../../shared/models/status-notification.model';
 import { StatusNotification } from "../../../../shared/components/status-notification/status-notification";
 import { CreateToDoSidebarList } from '../../components/create-todo-sidebar-list/create-todo-sidebar-list';
 import { CreateToDoSidebarListModel } from '../../models/create-todo-sidebar-list.model';
+import { TodoStore } from '../../../../core/stores/todo.store';
 
 @Component({
   selector: 'app-todo-page',
@@ -25,16 +25,18 @@ export class TodoPage implements OnInit {
   authService = inject(AuthSevice);
   todoListService = inject(TodoListService);
   router = inject(Router);
+  todoStore = inject(TodoStore);
   statusNotification = signal<StatusNotificationData | null>(null);
 
   currentUser = signal<UserInfo | undefined | null>(undefined);
-  sidebarListResponse = signal<PagedResponse<ToDoSidebarList> | undefined | null>(undefined);
-  sidebarListEditingListId = signal<number>(-1);
-  currentSidebarListId = signal<number | undefined>(undefined);
   isCreateSidebarList = signal<boolean>(false);
 
   page = signal<number>(1);
   private pageSize = 10;
+  totalCount = signal(0);
+  totalPages = signal(0);
+  hasNext = signal(false);
+  hasPrevious = signal(false);
 
   toDoSidebarSystemLists: ToDoSidebarList[] = [
     { id: 1, title: "list1-s", countItems: 1 },
@@ -44,18 +46,35 @@ export class TodoPage implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.currentUser.set(await this.authService.getCurrentUserInfo());
-    await this.loadLists(true);
+    await this.loadLists();
   }
 
-  loadLists(selectedFirst = false): void {
+  constructor() {
+    effect(() => {
+      const listChanged = this.todoStore.listChanged();
+
+      if (listChanged === null) {
+        return;
+      }
+
+      this.loadLists();
+    })
+  }
+
+  loadLists(): void {
     this.todoListService.getUserSidebarLists({
       page: this.page(), pageSize: this.pageSize
     }).subscribe({
       next: response => {
-        this.sidebarListResponse.set(response);
+        this.todoStore.setSidebarLists(response.items);
 
-        if (selectedFirst) {
-          this.currentSidebarListId.set(response.items[0].id);
+        this.totalCount.set(response.totalCount);
+        this.totalPages.set(response.totalPages);
+        this.hasNext.set(response.hasNextPage);
+        this.hasPrevious.set(response.hasPreviousPage);
+
+        if (this.todoStore.selectedListId() === null && response.items.length > 0) {
+          this.todoStore.selectListId(response.items[0].id);
         }
       }
     });
@@ -66,14 +85,6 @@ export class TodoPage implements OnInit {
     this.router.navigate(["/login"]);
   };
 
-  onListClick(listId: number) {
-    this.currentSidebarListId.set(listId);
-  }
-
-  onCreateList(): void {
-    this.isCreateSidebarList.set(true);
-  }
-
   onCreateListSubmit(model: CreateToDoSidebarListModel): void {
     const request: CreateToDoListRequest = {
       title: model.title,
@@ -82,7 +93,7 @@ export class TodoPage implements OnInit {
 
     this.todoListService.createList(request).subscribe({
       next: response => {
-        this.loadLists(false);
+        this.loadLists();
         this.isCreateSidebarList.set(false);
       },
       error: error => {
@@ -99,49 +110,6 @@ export class TodoPage implements OnInit {
 
   onCreateListCancel(): void {
     this.isCreateSidebarList.set(false);
-  }
-
-  onListDelete(listId: number) {
-    this.todoListService.deleteList(listId).subscribe({
-      next: response => {
-        this.loadLists(true);
-      }
-    });
-  }
-
-  onListEdit(updatedList: ToDoList): void {
-    this.sidebarListResponse.update(response => {
-      if (!response) {
-        return response;
-      }
-
-      return {
-        ...response,
-        items: response.items.map(item =>
-          item.id === updatedList.id
-            ? {
-              ...item,
-              title: updatedList.title
-            }
-            : item
-        )
-      };
-    });
-  }
-
-  onItemCreate(listId: number): void {
-    this.sidebarListResponse.update(response => {
-      if (!response) {
-        return response;
-      }
-
-      return {
-        ...response,
-        items: response.items.map(item => 
-          item.id === listId ? { ...item, countItems: item.countItems + 1} : item
-        )
-      }
-    })
   }
 
   onActionError(errorResponse: ErrorResponse): void {

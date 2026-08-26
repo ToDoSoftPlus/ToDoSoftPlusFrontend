@@ -1,11 +1,14 @@
-<div class="todo-sidebar-list flex items-center my-2 py-1" [class.active]="isActive()" (click)="onListClick.emit()">
-    <img class="todo-sidebar-list__image mr-2" src="ListIcon.png" alt="List icon" width="28px">
-    <p class="todo-sidebar-list__text text-sm">{{toDoSidebarList().title}}</p>
+@let list = toDoSidebarList();
 
-    @if (toDoSidebarList().countItems > 0) {
+<div class="todo-sidebar-list flex items-center my-2 py-1" [class.active]="todoStore.selectedListId() == list.id"
+    (click)="todoStore.selectListId(list.id)">
+    <img class="todo-sidebar-list__image mr-2" src="ListIcon.png" alt="List icon" width="28px">
+    <p class="todo-sidebar-list__text text-sm">{{list.title}}</p>
+
+    @if (list.countItems > 0) {
     <div class="todo-sidebar-list__count-wrapper flex justify-center items-center ml-auto mr-2">
         <p class="todo-sidebar-list__count-text text-xs">
-            {{toDoSidebarList().countItems}}
+            {{list.countItems}}
         </p>
     </div>
     }

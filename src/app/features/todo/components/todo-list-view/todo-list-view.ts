@@ -6,8 +6,9 @@ import { form, maxLength, minLength, required, FormField } from '@angular/forms/
 import { ErrorResponse } from '../../../../core/models/common/error-response.model';
 import { TodoItemService } from '../../../../core/services/todo-item';
 import { CreateToDoItemRequest, ToDoItem } from '../../../../core/models/todos/todo-item/todo-item.model';
-import { max, single } from 'rxjs';
 import { PagedResponse } from '../../../../core/models/common/paged-response.model';
+import { TodoStore } from '../../../../core/stores/todo.store';
+import { ToDoSidebarList } from '../../models/todo-sidebar-list.model';
 
 @Component({
   selector: 'app-todo-list-view',
@@ -16,15 +17,11 @@ import { PagedResponse } from '../../../../core/models/common/paged-response.mod
   styleUrl: './todo-list-view.scss',
 })
 export class TodoListView {
-  toDoListId = input.required<number>();
-
-  onListDelete = output<void>();
-  onListEdit = output<ToDoList>();
-  onItemCreate = output<number>();
   onActionError = output<ErrorResponse>();
 
   toDoListService = inject(TodoListService);
   toDoItemService = inject(TodoItemService);
+  todoStore = inject(TodoStore);
 
   toDoList = signal<ToDoList | undefined>(undefined);
   toDoItems = signal<PagedResponse<ToDoItem> | undefined>(undefined);
@@ -61,13 +58,16 @@ export class TodoListView {
 
   constructor() {
     effect(() => {
-      const listId = this.toDoListId();
+      const listId = this.todoStore.selectedListId();
       this.loadList(listId);
       this.loadListItems(listId);
     })
   }
 
-  loadList(listId: number): void {
+  loadList(listId: number | null): void {
+    if (listId === null)
+      return;
+
     this.toDoListService.getListById(listId).subscribe({
       next: response => {
         this.toDoList.set(response);
@@ -91,7 +91,10 @@ export class TodoListView {
     })
   }
 
-  async loadListItems(listId: number): Promise<void> {
+  loadListItems(listId: number | null): void {
+    if (listId === null)
+      return;
+
     this.toDoItemService.getItemsInList(listId, {page: this.page(), pageSize: this.pageSize}).subscribe({
       next: response => {
         this.toDoItems.set(response);
@@ -126,7 +129,8 @@ export class TodoListView {
 
         this.isEditList.set(false);
 
-        this.onListEdit.emit(response);
+        this.todoStore.updateSidebarTitleList(response.id, response.title);
+        this.todoStore.notifyListChanged();
       },
       error: error => {
         const errorResponse = error.error as ErrorResponse;
@@ -139,6 +143,19 @@ export class TodoListView {
     this.isEditList.set(false);
   }
 
+  onListDeleteButtonClick(): void {
+    const listId = this.todoStore.selectedListId();
+    if (listId === null)
+      return;
+
+    this.toDoListService.deleteList(listId).subscribe({
+      next: () => {
+        this.todoStore.selectListId(null);
+        this.todoStore.notifyListChanged();
+      }
+    })
+  }
+
   onItemCreateSubmit(event: Event): void {
     event.preventDefault();
 
@@ -149,7 +166,7 @@ export class TodoListView {
     this.toDoItemService.createItem(this.createItemModel()).subscribe({
       next: response => {
         this.loadListItems(response.toDoListId);
-        this.onItemCreate.emit(response.toDoListId);
+        this.todoStore.incrementItemCount(response.toDoListId);
       },
       error: error => {
         const errorResponse = error.error as ErrorResponse;
