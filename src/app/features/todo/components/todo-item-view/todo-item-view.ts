@@ -3,10 +3,11 @@ import { TodoStore } from '../../../../core/stores/todo.store';
 import { ToDoItem, UpdateToDoItemRequest } from '../../../../core/models/todos/todo-item/todo-item.model';
 import { form, FormField } from '@angular/forms/signals';
 import { TodoItemService } from '../../../../core/services/todo-item';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-todo-item-view',
-  imports: [FormField],
+  imports: [FormField, DatePipe],
   templateUrl: './todo-item-view.html',
   styleUrl: './todo-item-view.scss',
 })

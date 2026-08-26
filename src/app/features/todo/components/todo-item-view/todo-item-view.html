@@ -1,25 +1,38 @@
-<div class="todo-item-view__container">
-    <form class="todo-item-view__form" (submit)="onFormSubmit($event)">
+<div class="todo-item-view__container flex flex-col h-full py-3 px-3">
+    <i class="bi bi-x-lg self-end mb-2" (click)="todoStore.clearItem()"></i>
+    <form class="todo-item-view__form w-full flex flex-col h-full justify-center gap-3"
+        (submit)="onFormSubmit($event)">
         <div class="todo-item-view__card">
-            <div class="todo-item-view__item">
-                <input class="todo-item-view__complete" type="checkbox" [formField]="todoItemForm.isCompleted">
-                <input class="todo-item-view__title" type="text" placeholder="Title" [formField]="todoItemForm.title">
-                <label class="todo-item-view__star">
+            <div class="todo-item-view__item flex">
+                <label class="todo-item-view__complete mr-2">
+                    <input type="checkbox" [formField]="todoItemForm.isCompleted">
+                    <span></span>
+                </label>
+                <input class="todo-item-view__title outline-0 font-bold" type="text" placeholder="Title"
+                    [formField]="todoItemForm.title">
+                <label class="todo-item-view__star ml-auto">
                     <input type="checkbox" [formField]="todoItemForm.isImportant">
                     <span>★</span>
                 </label>
             </div>
-            <div class="todo-item-view__header-sub-item">
-                <button class="todo-item-view__header-sub-item-add">Add sub task</button>
+            <div class="todo-item-view__sub-item flex gap-1">
+                <i class="bi bi-plus-lg text-blue-500"></i>
+                <button class="todo-item-view__sub-item-add text-blue-500">Add sub task</button>
             </div>
         </div>
-        <div class="todo-item-view-card">
-            <input class="todo-item-view-description" type="text" placeholder="Note"
-                [formField]="todoItemForm.description">
+        <div class="todo-item-view__card">
+            <textarea class="todo-item-view-description w-full outline-0 text-wrap" type="text" placeholder="Note"
+                rows="3" [formField]="todoItemForm.description"></textarea>
         </div>
-        <div class="todo-item-view-card">
-            <button class="todo-item-view-save" type="submit">Save changes</button>
-            <button class="todo-item-view-delete" type="button" (click)="onDelete()">Delete</button>
+        <div class="todo-item-view__card flex mt-auto">
+            <div class="todo-item-view__created-at flex items-center">
+                <p class="text-sm text-gray-500">Created {{todoStore.selectedItem()?.createdAt | date:'EEE, d MMMM':'':'en-EN'}}</p>
+            </div>
+            <div class="todo-item-view__actions ml-auto">
+                <button class="todo-item-view-save form-submit mr-2 p-2" type="submit">Save</button>
+                <button class="todo-item-view-delete delete-button p-2" type="button"
+                    (click)="onDelete()">Delete</button>
+            </div>
         </div>
     </form>
 </div>

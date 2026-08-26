@@ -16,7 +16,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        cursor: pointer;
 
         input {
             display: none;
@@ -32,15 +31,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-
-            &:hover {
-                &::after {
-                    content: '✓';
-                    color: #9ca3af;
-                    font-size: 12px;
-                    font-weight: bold;
-                }
-            }
         }
 
         input:checked+span {
@@ -59,8 +49,6 @@
     &__important {
 
         &-star {
-            cursor: pointer;
-
             input {
                 display: none;
             }
@@ -69,10 +57,6 @@
                 font-size: 28px;
                 color: #9ca3af;
                 transition: color ease-in-out 200ms;
-            }
-
-            span:hover {
-                color: #facc15;
             }
 
             input:checked+span {
