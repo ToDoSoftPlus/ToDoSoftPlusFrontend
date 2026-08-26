@@ -13,11 +13,12 @@ import { StatusNotification } from "../../../../shared/components/status-notific
 import { CreateToDoSidebarList } from '../../components/create-todo-sidebar-list/create-todo-sidebar-list';
 import { CreateToDoSidebarListModel } from '../../models/create-todo-sidebar-list.model';
 import { TodoStore } from '../../../../core/stores/todo.store';
+import { TodoItemView } from '../../components/todo-item-view/todo-item-view';
 
 @Component({
   selector: 'app-todo-page',
   standalone: true,
-  imports: [TodoSidebarList, CreateToDoSidebarList, TodoListView, StatusNotification],
+  imports: [TodoSidebarList, CreateToDoSidebarList, TodoListView, TodoItemView, StatusNotification],
   templateUrl: './todo-page.html',
   styleUrl: './todo-page.scss',
 })
@@ -58,6 +59,16 @@ export class TodoPage implements OnInit {
       }
 
       this.loadLists();
+    })
+
+    effect(() => {
+      const currentListId = this.todoStore.selectedListId();
+
+      if (currentListId === null) {
+        return;
+      }
+
+      this.todoStore.clearItem();
     })
   }
 

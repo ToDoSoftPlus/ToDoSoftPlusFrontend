@@ -1,16 +1,25 @@
-<section class="todo-item-view">
-    <div class="todo-item-view__container">
-        <div class="todo-item-view__header">
-            <form class="todo-item-view__header-form" action="">
-                <div class="todo-item-view__header-item">
-                    <input class="todo-item-view__header-complete" type="checkbox">
-                    <input class="todo-item-view__header-title" type="text">
-                    <input class="todo-item-view__header-important" type="checkbox">
-                </div>
-                <div class="todo-item-view__header-sub-item">
-                    <button class="todo-item-view__header-sub-item-add">Add sub task</button>
-                </div>
-            </form>
+<div class="todo-item-view__container">
+    <form class="todo-item-view__form" (submit)="onFormSubmit($event)">
+        <div class="todo-item-view__card">
+            <div class="todo-item-view__item">
+                <input class="todo-item-view__complete" type="checkbox" [formField]="todoItemForm.isCompleted">
+                <input class="todo-item-view__title" type="text" placeholder="Title" [formField]="todoItemForm.title">
+                <label class="todo-item-view__star">
+                    <input type="checkbox" [formField]="todoItemForm.isImportant">
+                    <span>★</span>
+                </label>
+            </div>
+            <div class="todo-item-view__header-sub-item">
+                <button class="todo-item-view__header-sub-item-add">Add sub task</button>
+            </div>
         </div>
-    </div>
-</section>
+        <div class="todo-item-view-card">
+            <input class="todo-item-view-description" type="text" placeholder="Note"
+                [formField]="todoItemForm.description">
+        </div>
+        <div class="todo-item-view-card">
+            <button class="todo-item-view-save" type="submit">Save changes</button>
+            <button class="todo-item-view-delete" type="button" (click)="onDelete()">Delete</button>
+        </div>
+    </form>
+</div>

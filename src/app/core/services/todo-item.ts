@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { CreateToDoItemRequest, ToDoItem } from '../models/todos/todo-item/todo-item.model';
+import { CreateToDoItemRequest, ToDoItem, UpdateToDoItemRequest } from '../models/todos/todo-item/todo-item.model';
 import { Observable } from 'rxjs';
 import { PaginationRequest } from '../models/common/pagination-request.model';
 import { PagedResponse } from '../models/common/paged-response.model';
@@ -30,5 +30,16 @@ export class TodoItemService {
             `${this.apiUrl}/v1/todo-item/list/${listId}`,
             { params: params}
         );
+    }
+
+    updateItem(request: UpdateToDoItemRequest): Observable<ToDoItem> {
+        return this.http.put<ToDoItem>(
+            `${this.apiUrl}/v1/todo-item`,
+            request
+        );
+    }
+
+    deleteItem(itemId: number) {
+        return this.http.delete(`${this.apiUrl}/v1/todo-item/${itemId}`);
     }
 }

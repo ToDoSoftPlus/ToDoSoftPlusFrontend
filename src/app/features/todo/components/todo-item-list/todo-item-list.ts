@@ -1,5 +1,6 @@
-import { Component, input } from '@angular/core';
+import { Component, effect, inject, input } from '@angular/core';
 import { ToDoItem } from '../../../../core/models/todos/todo-item/todo-item.model';
+import { TodoStore } from '../../../../core/stores/todo.store';
 
 @Component({
   selector: 'app-todo-item-list',
@@ -9,4 +10,20 @@ import { ToDoItem } from '../../../../core/models/todos/todo-item/todo-item.mode
 })
 export class TodoItemList {
   toDoItem = input.required<ToDoItem>();
+
+  todoStore = inject(TodoStore);
+
+  onItemClick(): void {
+    console.log(this.todoStore.selectedItem());
+    if (this.todoStore.selectedItem() === null) {
+      this.todoStore.selectItem(this.toDoItem())
+    } else if (this.todoStore.selectedItem()?.id !== this.toDoItem().id) {
+      console.log(this.toDoItem());
+      
+      this.todoStore.selectItem(this.toDoItem())
+    }
+    else {
+      this.todoStore.clearItem();
+    }
+  }
 }

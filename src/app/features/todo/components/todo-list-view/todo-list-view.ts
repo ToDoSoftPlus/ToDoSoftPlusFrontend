@@ -59,8 +59,50 @@ export class TodoListView {
   constructor() {
     effect(() => {
       const listId = this.todoStore.selectedListId();
+
+      if (!listId) {
+        return;
+      }
+
       this.loadList(listId);
       this.loadListItems(listId);
+    })
+
+    effect(() => {
+      const changedItem = this.todoStore.itemUpdated();
+
+      if (!changedItem) {
+        return;
+      }
+
+      this.toDoItems.update(response => {
+        if (!response) {
+          return response;
+        }
+
+        return {
+          ...response,
+          items: response.items.map(item =>
+            item.id === changedItem.id ? changedItem : item
+          )
+        };
+      });
+    })
+
+    effect(() => {
+      const itemDeleted = this.todoStore.itemDeleted();
+
+      if (!itemDeleted) {
+        return;
+      }
+
+      const listId = this.todoStore.selectedListId();
+
+      if (!listId) {
+        return;
+      }
+
+      this.loadListItems(this.todoStore.selectedListId());
     })
   }
 
@@ -95,7 +137,7 @@ export class TodoListView {
     if (listId === null)
       return;
 
-    this.toDoItemService.getItemsInList(listId, {page: this.page(), pageSize: this.pageSize}).subscribe({
+    this.toDoItemService.getItemsInList(listId, { page: this.page(), pageSize: this.pageSize }).subscribe({
       next: response => {
         this.toDoItems.set(response);
       },

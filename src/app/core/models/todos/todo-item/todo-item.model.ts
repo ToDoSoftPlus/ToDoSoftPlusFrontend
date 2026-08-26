@@ -6,9 +6,9 @@ export interface ToDoItem {
     description: string | null,
     isImportant: boolean,
     isCompleted: boolean,
-    createdAt: number,
-    updatedAt: number,
-    completedAt: number | null,
+    createdAt: string,
+    updatedAt: string,
+    completedAt: string | null,
     toDoListId: number,
     toDoSubItems: Array<ToDoSubItem> | null
 }
@@ -16,6 +16,16 @@ export interface ToDoItem {
 export interface CreateToDoItemRequest {
     title: string,
     description: string | null,
+    isImportant: boolean,
+    isCompleted: boolean,
+    completedAt: Date | null,
+    toDoListId: number
+}
+
+export interface UpdateToDoItemRequest {
+    id: number,
+    title: string,
+    description: string,
     isImportant: boolean,
     isCompleted: boolean,
     completedAt: Date | null,

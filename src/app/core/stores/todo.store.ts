@@ -11,11 +11,15 @@ export class TodoStore {
     private _selectedItem = signal<ToDoItem | null>(null);
     private _selectedListId = signal<number | null>(null);
     private _listChanged = signal<number>(0);
+    private _itemUpdated = signal<ToDoItem | null>(null);
+    private _itemDeleted = signal<number>(0);
 
     readonly sidebarLists = this._sidebarLists.asReadonly();
     readonly selectedItem = this._selectedItem.asReadonly();
     readonly selectedListId = this._selectedListId.asReadonly();
     readonly listChanged = this._listChanged.asReadonly();
+    readonly itemUpdated = this._itemUpdated.asReadonly();
+    readonly itemDeleted = this._itemDeleted.asReadonly();
 
     setSidebarLists(lists: ToDoSidebarList[]): void {
         this._sidebarLists.set(lists);
@@ -58,6 +62,16 @@ export class TodoStore {
 
     notifyListChanged(): void {
         this._listChanged.update(x => x + 1);
+    }
+
+    notifyItemChanged(item: ToDoItem): void {
+        this._itemUpdated.set(item);
+        this._selectedItem.set(item);
+    }
+
+    notifyItemDeleted(): void {
+        this._itemDeleted.update(x => x + 1);
+        this.clearItem();
     }
 
     selectItem(item: ToDoItem): void {

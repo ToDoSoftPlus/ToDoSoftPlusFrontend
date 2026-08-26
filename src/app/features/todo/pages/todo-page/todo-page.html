@@ -1,5 +1,6 @@
 @let sidebarLists = this.todoStore.sidebarLists();
 @let selectedListId = this.todoStore.selectedListId();
+@let selectedItem = this.todoStore.selectedItem();
 
 <div class="todo-page flex flex-row h-full">
     <div class="todo-sidebar px-5 flex flex-col mt-5">
@@ -37,7 +38,7 @@
         @if (sidebarLists) {
         <div class="todo-sidebar__user-lists-wrapper">
             @for (list of sidebarLists; track list.id) {
-            <app-todo-sidebar-list [toDoSidebarList]="list"/>
+            <app-todo-sidebar-list [toDoSidebarList]="list" />
             }
 
             @if (isCreateSidebarList()) {
@@ -47,19 +48,27 @@
         }
 
         <div class="todo-sidebar__actions-wrapper mt-auto mb-6">
-            <button class="todo-sidebar__actions-add-list flex gap-3 p-2" type="button" (click)="isCreateSidebarList.set(true)">
+            <button class="todo-sidebar__actions-add-list flex gap-3 p-2" type="button"
+                (click)="isCreateSidebarList.set(true)">
                 <img class="todo-sidebar__actions-add-list-image" src="AddIcon.svg" alt="Add icon" width="24px">
                 <p class="todo-sidebar__actions-add-list-text">Створити список</p>
             </button>
         </div>
     </div>
 
-    <section class="todo-container w-full h-full">
+    <section class="todo-list-container w-full h-full">
         @if (selectedListId !== null) {
         <app-todo-list-view (onActionError)="onActionError($event)" />
         }
 
     </section>
+
+    @if (selectedItem !== null) {
+    <section class="todo-item-container w-1/4 h-full">
+        <app-todo-item-view />
+    </section>
+    }
+
 </div>
 
 <app-status-notification [notification]="statusNotification()" (closed)="statusNotification.set(null)" />
