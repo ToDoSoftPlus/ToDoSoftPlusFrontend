@@ -149,7 +149,17 @@ export class TodoListView {
   }
 
   onListEditButtonClick(): void {
+    const list = this.toDoList();
+
+    if (list === undefined)
+      return;
+
     this.isEditList.set(true);
+    this.editListModel.set({
+      id: list.id,
+      title: list.title,
+      description: list.description ?? ''
+    });
   }
 
   onListEditSubmit(event: Event): void {
@@ -183,6 +193,11 @@ export class TodoListView {
 
   onListEditCancel(): void {
     this.isEditList.set(false);
+    this.editListModel.set({
+      id: 0,
+      title: '',
+      description: ''
+    });
   }
 
   onListDeleteButtonClick(): void {
