@@ -14,12 +14,9 @@ export class TodoItemList {
   todoStore = inject(TodoStore);
 
   onItemClick(): void {
-    console.log(this.todoStore.selectedItem());
     if (this.todoStore.selectedItem() === null) {
       this.todoStore.selectItem(this.toDoItem())
-    } else if (this.todoStore.selectedItem()?.id !== this.toDoItem().id) {
-      console.log(this.toDoItem());
-      
+    } else if (this.todoStore.selectedItem()?.id !== this.toDoItem().id) {      
       this.todoStore.selectItem(this.toDoItem())
     }
     else {

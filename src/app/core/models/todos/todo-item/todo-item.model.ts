@@ -10,7 +10,7 @@ export interface ToDoItem {
     updatedAt: string,
     completedAt: string | null,
     toDoListId: number,
-    toDoSubItems: Array<ToDoSubItem> | null
+    subToDoItems: Array<ToDoSubItem> | null
 }
 
 export interface CreateToDoItemRequest {

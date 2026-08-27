@@ -15,10 +15,7 @@ export class TodoItemService {
     constructor(private http: HttpClient) { }
 
     createItem(request: CreateToDoItemRequest): Observable<ToDoItem> {
-        return this.http.post<ToDoItem>(
-            `${this.apiUrl}/v1/todo-item`,
-            request
-        );
+        return this.http.post<ToDoItem>(`${this.apiUrl}/v1/todo-item`, request);
     }
 
     getItemsInList(listId: number, request: PaginationRequest): Observable<PagedResponse<ToDoItem>> {
@@ -33,10 +30,7 @@ export class TodoItemService {
     }
 
     updateItem(request: UpdateToDoItemRequest): Observable<ToDoItem> {
-        return this.http.put<ToDoItem>(
-            `${this.apiUrl}/v1/todo-item`,
-            request
-        );
+        return this.http.put<ToDoItem>( `${this.apiUrl}/v1/todo-item`, request);
     }
 
     deleteItem(itemId: number) {
