@@ -47,6 +47,10 @@
                 background-color: #ad93c0;
             }
         }
+    }
 
+    &__user-lists-wrapper {
+        max-height: 40%;
+        overflow-y: auto;
     }
 }
