@@ -1,4 +1,4 @@
-@let itemResponse = toDoItems();
+@let items = toDoItems();
 @let list = toDoList();
 
 <div class="todo-list-view__container flex flex-col h-full px-7 py-11">
@@ -26,20 +26,33 @@
         </div>
         <div class="todo-list-view__actions flex gap-1 ml-auto">
             <button class="todo-list-actions-edit edit-button px-2" (click)="onListEditButtonClick()">Edit list</button>
-            <button class="todo-list-actions-delete delete-button px-2" (click)="onListDeleteButtonClick()">Delete list</button>
+            <button class="todo-list-actions-delete delete-button px-2" (click)="onListDeleteButtonClick()">Delete
+                list</button>
         </div>
     </div>
 
-    <div class="todo-list-view__item-list-wrapper flex flex-col gap-2">
-        @for (item of itemResponse?.items; track item.id) {
+    <div class="todo-list-view__item-list-wrapper flex flex-col h-full gap-2">
+        @if (items.length > 0) {
+        @for (item of items; track item.id) {
         <app-todo-item-list [toDoItem]="item" />
+        }
+        <div class="mt-auto mb-5">
+            <app-pagination [page]="page()" [pageSize]="pageSize" [totalCount]="totalCount()"
+                [totalPages]="totalPages()" [hasNextPage]="hasNext()" [hasPreviousPage]="hasPrevious()"
+                (nextPage)="loadListItems(list?.id!, page() + 1)"
+                (previousPage)="loadListItems(list?.id!, page() - 1)"
+                (firstPage)="loadListItems(list?.id!, 1)"
+                (lastPage)="loadListItems(list?.id!, totalPages())"/>
+        </div>
         }
     </div>
 
     <div class="todo-list-view__actions-wrapper mt-auto">
         <div class="todo-list-view__actions-add flex items-center gap-2 p-2">
-            <img class="todo-list-view__actions-add-image cursor-pointer" src="AddIcon.svg" alt="" width="24px" (click)="onItemCreateSubmit($event)">
-            <form class="todo-list-view__actions-add-form w-full" (submit)="onItemCreateSubmit($event)" (keydown.escape)="onItemCreateClear()">
+            <img class="todo-list-view__actions-add-image cursor-pointer" src="AddIcon.svg" alt="" width="24px"
+                (click)="onItemCreateSubmit($event)">
+            <form class="todo-list-view__actions-add-form w-full" (submit)="onItemCreateSubmit($event)"
+                (keydown.escape)="onItemCreateClear()">
                 <input class="todo-list-view__actions-add-input w-full" type="text" placeholder="Create task"
                     [formField]="createItemForm.title">
             </form>
