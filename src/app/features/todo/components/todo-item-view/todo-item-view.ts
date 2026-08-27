@@ -1,7 +1,7 @@
 import { Component, effect, inject, model, OnInit, signal } from '@angular/core';
 import { TodoStore } from '../../../../core/stores/todo.store';
 import { ToDoItem, UpdateToDoItemRequest } from '../../../../core/models/todos/todo-item/todo-item.model';
-import { form, FormField } from '@angular/forms/signals';
+import { form, FormField, required } from '@angular/forms/signals';
 import { TodoItemService } from '../../../../core/services/todo-item';
 import { DatePipe } from '@angular/common';
 import { CreateToDoSubItemRequest, ToDoSubItem, UpdateToDoSubItemRequest } from '../../../../core/models/todos/tood-sub-item/todo-sub-item.model';
@@ -41,7 +41,7 @@ export class TodoItemView {
     toDoItemId: 0
   });
   creatingSubItemForm = form(this.creatingSubItemModel, (schema) => {
-
+    required(schema.description)
   });
 
   editingSubItemId = signal<number | null>(null);
@@ -52,7 +52,7 @@ export class TodoItemView {
     toDoItemId: 0
   });
   editingSubItemForm = form(this.editingSubItemModel, (schema) => {
-
+    required(schema.description)
   });
 
   constructor() {
@@ -167,6 +167,16 @@ export class TodoItemView {
       description: subItem.description,
       isCompleted: subItem.isCompleted,
       toDoItemId: subItem.toDoItemId
+    });
+  }
+
+  onCancelEditSubItemButtonClick(): void {
+    this.editingSubItemId.set(null);
+    this.editingSubItemModel.set({
+      id: 0,
+      description: '',
+      isCompleted: false,
+      toDoItemId: 0
     });
   }
 

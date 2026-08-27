@@ -7,51 +7,6 @@
         padding: 8px;
     }
 
-    &__complete {
-        display: inline-flex;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-
-        input {
-            display: none;
-        }
-
-        span {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #9ca3af;
-            border-radius: 50%;
-            transition: 0.2s;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            &:hover {
-                &::after {
-                    content: '✓';
-                    color: #9ca3af;
-                    font-size: 12px;
-                    font-weight: bold;
-                }
-            }
-        }
-
-        input:checked+span {
-            background-color: #3b82f6;
-            border-color: #3b82f6;
-
-            &:after {
-                content: '✓';
-                color: white;
-                font-size: 12px;
-                font-weight: bold;
-            }
-        }
-    }
-
     &__star {
         cursor: pointer;
 

@@ -17,6 +17,7 @@
 }
 
 .form-submit {
+    cursor: pointer;
     background-color: #215E61;
     border-radius: 8px;
     transition: background-color ease-in-out 100ms;
@@ -32,6 +33,7 @@
 }
 
 .form-cancel {
+    cursor: pointer;
     background-color: #C5C1C1;
     border-radius: 8px;
     transition: background-color ease-in-out 100ms;
@@ -58,9 +60,9 @@
 }
 
 .edit-button {
+    cursor: pointer;
     background-color: #FFD758;
     border-radius: 8px;
-    padding-inline: 8px;
     transition: background-color ease-in-out 100ms;
 
     &:hover {
@@ -73,9 +75,9 @@
 }
 
 .delete-button {
+    cursor: pointer;
     background-color: #DF301C;
     border-radius: 8px;
-    padding-inline: 8px;
     transition: background-color ease-in-out 100ms;
 
     &:hover {
@@ -105,5 +107,127 @@
         outline: none;
         background-color: #f5f5f5;
         border-bottom: 1px solid #3874FF;
+    }
+}
+
+.checkbox-complete {
+    display: inline-flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    input {
+        display: none;
+    }
+
+    span {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #9ca3af;
+        border-radius: 50%;
+        transition: 0.2s;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            &::after {
+                content: '✓';
+                color: #9ca3af;
+                font-size: 12px;
+                font-weight: bold;
+            }
+        }
+    }
+
+    input:checked+span {
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+
+        &:after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    }
+
+    &:has(input:disabled) {
+        cursor: default;
+
+        span {
+            cursor: default;
+        }
+
+        &:has(input:not(:checked)) span:hover::after {
+            content: none;
+        }
+
+        &:has(input:checked) span:hover::after {
+            content: '✓';
+        }
+    }
+}
+
+.checkbox-complete-small {
+    display: inline-flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    input {
+        display: none;
+    }
+
+    span {
+        width: 14px;
+        height: 14px;
+        border: 2px solid #9ca3af;
+        border-radius: 50%;
+        transition: 0.2s;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            &::after {
+                content: '✓';
+                color: #9ca3af;
+                font-size: 8px;
+                font-weight: bold;
+            }
+        }
+    }
+
+    input:checked+span {
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+
+        &:after {
+            content: '✓';
+            color: white;
+            font-size: 8px;
+            font-weight: bold;
+        }
+    }
+
+    &:has(input:disabled) {
+        cursor: default;
+
+        span {
+            cursor: default;
+        }
+
+        &:has(input:not(:checked)) span:hover::after {
+            content: none;
+        }
+
+        &:has(input:checked) span:hover::after {
+            content: '✓';
+        }
     }
 }
