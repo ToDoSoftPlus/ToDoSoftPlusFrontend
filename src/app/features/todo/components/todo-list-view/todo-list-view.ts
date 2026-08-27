@@ -9,10 +9,11 @@ import { CreateToDoItemRequest, ToDoItem } from '../../../../core/models/todos/t
 import { PagedResponse } from '../../../../core/models/common/paged-response.model';
 import { TodoStore } from '../../../../core/stores/todo.store';
 import { ToDoSidebarList } from '../../models/todo-sidebar-list.model';
+import { Pagination } from '../../../../shared/components/pagination/pagination';
 
 @Component({
   selector: 'app-todo-list-view',
-  imports: [TodoItemList, FormField],
+  imports: [TodoItemList, FormField, Pagination],
   templateUrl: './todo-list-view.html',
   styleUrl: './todo-list-view.scss',
 })
@@ -24,10 +25,14 @@ export class TodoListView {
   todoStore = inject(TodoStore);
 
   toDoList = signal<ToDoList | undefined>(undefined);
-  toDoItems = signal<PagedResponse<ToDoItem> | undefined>(undefined);
+  toDoItems = signal<ToDoItem[]>([]);
 
   page = signal<number>(1);
-  private pageSize = 7;
+  pageSize = 6;
+  totalCount = signal(0);
+  totalPages = signal(0);
+  hasNext = signal(false);
+  hasPrevious = signal(false);
 
   isEditList = signal<boolean>(false);
   editListModel = signal<UpdateToDoListRequest>({
@@ -65,7 +70,7 @@ export class TodoListView {
       }
 
       this.loadList(listId);
-      this.loadListItems(listId);
+      this.loadListItems(listId, this.page());
     })
 
     effect(() => {
@@ -75,18 +80,7 @@ export class TodoListView {
         return;
       }
 
-      this.toDoItems.update(response => {
-        if (!response) {
-          return response;
-        }
-
-        return {
-          ...response,
-          items: response.items.map(item =>
-            item.id === changedItem.id ? changedItem : item
-          )
-        };
-      });
+      this.toDoItems.update(items => items.map(item => item.id === changedItem.id ? changedItem : item));
     })
 
     effect(() => {
@@ -96,13 +90,7 @@ export class TodoListView {
         return;
       }
 
-      const listId = this.todoStore.selectedListId();
-
-      if (!listId) {
-        return;
-      }
-
-      this.loadListItems(this.todoStore.selectedListId());
+      this.loadListItems(this.toDoList()?.id!, this.page());
     })
   }
 
@@ -133,13 +121,18 @@ export class TodoListView {
     })
   }
 
-  loadListItems(listId: number | null): void {
+  loadListItems(listId: number | null, page: number): void {
     if (listId === null)
       return;
 
-    this.toDoItemService.getItemsInList(listId, { page: this.page(), pageSize: this.pageSize }).subscribe({
+    this.toDoItemService.getItemsInList(listId, { page: page, pageSize: this.pageSize }).subscribe({
       next: response => {
-        this.toDoItems.set(response);
+        this.toDoItems.set(response.items);
+        this.page.set(response.page);
+        this.totalCount.set(response.totalCount);
+        this.totalPages.set(response.totalPages);
+        this.hasNext.set(response.hasNextPage);
+        this.hasPrevious.set(response.hasPreviousPage);
       },
       error: error => {
         const errorResponse = error.error as ErrorResponse;
@@ -222,7 +215,7 @@ export class TodoListView {
 
     this.toDoItemService.createItem(this.createItemModel()).subscribe({
       next: response => {
-        this.loadListItems(response.toDoListId);
+        this.loadListItems(response.toDoListId, this.page());
         this.todoStore.incrementItemCount(response.toDoListId);
       },
       error: error => {
