@@ -6,7 +6,7 @@ import { AuthSevice } from '../../../../core/services/auth';
 import { StatusNotification } from '../../../../shared/components/status-notification/status-notification';
 import { StatusNotificationData } from '../../../../shared/models/status-notification.model';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorResponse } from '../../../../core/models/common/error-response.mode';
+import { ErrorResponse } from '../../../../core/models/common/error-response.model';
 
 @Component({
   selector: 'app-login-page',

@@ -24,9 +24,7 @@ export class StatusNotification {
       if (notification) {
         this.isClosing = false;
         this.startTimer();
-      }
-      console.log(notification);
-      
+      }      
     });
   }
 

@@ -1,0 +1,102 @@
+<div class="todo-item-view__container flex flex-col h-full py-3 px-3">
+    <i class="bi bi-x-lg self-end mb-2" (click)="todoStore.clearItem()"></i>
+    <form class="todo-item-view__form w-full flex flex-col h-full justify-center gap-3" (submit)="onFormSubmit($event)">
+        <div class="todo-item-view__card">
+            <div class="todo-item-view__item flex">
+                <label class="todo-item-view__complete checkbox-complete mr-2">
+                    <input type="checkbox" [formField]="todoItemForm.isCompleted">
+                    <span></span>
+                </label>
+                <input class="todo-item-view__title outline-0 font-bold" type="text" placeholder="Title"
+                    [formField]="todoItemForm.title">
+                <label class="todo-item-view__star ml-auto">
+                    <input type="checkbox" [formField]="todoItemForm.isImportant">
+                    <span>★</span>
+                </label>
+            </div>
+            <div class="todo-item-view__sub-item flex flex-col gap-1">
+                @if (todoSubItemsModel().length > 0) {
+                @for (subItem of todoSubItemsModel(); track subItem.id) {
+                @if (editingSubItemId() !== null && editingSubItemId() === subItem.id) {
+                <form class="flex" (submit)="onEditSubItem($event)">
+                    <label class="todo-item-view__sub-item-completed checkbox-complete-small mr-2">
+                        <input type="checkbox" [formField]="editingSubItemForm.isCompleted">
+                        <span></span>
+                    </label>
+                    <input class="todo-item-view__sub-item-description outline-0 w-full text-gray-500 text-sm"
+                        type="text" [formField]="editingSubItemForm.description" appAutofocus>
+                    <div class="todo-item-view__sub-item-actions flex gap-1 ml-auto">
+                        <button class="todo-item-view__sub-item-edit-submit form-submit px-1" type="submit">
+                            <i class="bi bi-check"></i>
+                        </button>
+                        <button class="todo-item-view__sub-item-edit-cancel form-cancel px-1"
+                            (click)="onCancelEditSubItemButtonClick()">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                </form>
+                } @else {
+                <div class="todo-item-view__sub-item-list flex">
+                    <label class="todo-item-view__sub-item-completed checkbox-complete-small mr-2">
+                        <input type="checkbox" [checked]="subItem.isCompleted" disabled>
+                        <span></span>
+                    </label>
+                    <input class="todo-item-view__sub-item-description w-full text-gray-500 text-sm"
+                        type="text" [value]="subItem.description" disabled>
+                    <div class="todo-item-view__sub-item-actions flex gap-1 ml-auto">
+                        <button class="todo-item-view__sub-item-edit edit-button px-1" (click)="onEditSubItemButtonClick(subItem)">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="todo-item-view__sub-item-delete delete-button px-1 text-gray-200" (click)="onDeleteSubItem(subItem.id)">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                }
+                }
+                }
+                @if(isCreatingSubItem()) {
+                <form class="todo-item-view__sub-item-add-form flex" (submit)="onCreateSubItem($event)">
+                    <label class="todo-item-view__sub-item-completed checkbox-complete-small mr-2">
+                        <input type="checkbox" [formField]="creatingSubItemForm.isCompleted">
+                        <span></span>
+                    </label>
+                    <input class="todo-item-view__sub-item-description outline-0 w-full text-gray-500 text-sm"
+                        type="text" appAutofocus [formField]="creatingSubItemForm.description">
+                    <div class="todo-item-view__sub-item-add-actions flex gap-1 ml-auto">
+                        <button class="todo-item-view__sub-item-add-submit form-submit px-1" type="submit">
+                            <i class="bi bi-check"></i>
+                        </button>
+                        <button class="todo-item-view__sub-item-add-cancel form-cancel px-1" type="button"
+                            (click)="isCreatingSubItem.set(false)">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                </form>
+                }
+            </div>
+            <div class="todo-item-view__sub-item-action-add-wrapper">
+                <button class="todo-item-view__sub-item-action-add text-blue-500" (click)="isCreatingSubItem.set(true)">
+                    <i class="bi bi-plus-lg "></i>
+                    Add sub task
+                </button>
+            </div>
+        </div>
+        <div class="todo-item-view__card">
+            <textarea class="todo-item-view-description w-full outline-0 text-wrap" type="text" placeholder="Note"
+                rows="3" [formField]="todoItemForm.description"></textarea>
+        </div>
+        <div class="todo-item-view__card flex mt-auto">
+            <div class="todo-item-view__created-at flex items-center">
+                <p class="text-sm text-gray-500">
+                    Created {{todoStore.selectedItem()?.createdAt | date:'EEE, d MMMM':'':'en-EN'}}
+                </p>
+            </div>
+            <div class="todo-item-view__actions ml-auto">
+                <button class="todo-item-view-save form-submit mr-2 p-2" type="submit">Save</button>
+                <button class="todo-item-view-delete delete-button p-2" type="button"
+                    (click)="onDeleteItem()">Delete</button>
+            </div>
+        </div>
+    </form>
+</div>

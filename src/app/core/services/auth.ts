@@ -47,7 +47,7 @@ export class AuthSevice {
         this.currentUser.set(null);
     }
 
-    async getCurrentUserInfo(): Promise<UserInfo | null | undefined> {
+    async getCurrentUserInfo(): Promise<UserInfo | null> {
         const currentUser = this.currentUser();
 
         if (currentUser) {
@@ -61,7 +61,10 @@ export class AuthSevice {
         }
 
         const user = await firstValueFrom(
-            this.http.get<UserInfo>(`${this.apiUrl}/v1/user/me`, { withCredentials: true })
+            this.http.get<UserInfo>(
+                `${this.apiUrl}/v1/user/me`,
+                { withCredentials: true }
+            )
         );
 
         this.currentUser.set(user);

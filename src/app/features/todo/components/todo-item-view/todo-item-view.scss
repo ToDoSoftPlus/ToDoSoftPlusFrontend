@@ -1,0 +1,36 @@
+.todo-item-view {
+
+    &__card {
+        background-color: #FFF2F2;
+        border: 1px solid #e9dcdc;
+        border-radius: 4px;
+        padding: 8px;
+    }
+
+    &__star {
+        cursor: pointer;
+
+        input {
+            display: none;
+        }
+
+        span {
+            font-size: 28px;
+            color: #9ca3af;
+            transition: color ease-in-out 200ms;
+        }
+
+        span:hover {
+            color: #facc15;
+        }
+
+        input:checked+span {
+            color: #facc15;
+        }
+    }
+
+    &__sub-item {
+
+        
+    }
+}
