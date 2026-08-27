@@ -33,6 +33,17 @@ export class TodoStore {
         );
     }
 
+    appendSidebarLists(lists: ToDoSidebarList[]): void {
+        this._sidebarLists.update(current => [
+            ...current,
+            ...lists
+        ]);
+    }
+
+    clearSidebarLists(): void {
+        this._sidebarLists.set([]);
+    }
+
     updateSidebarTitleList(id: number, title: string): void {
         this._sidebarLists.update(lists =>
             lists.map(x => x.id === id ? { ...x, title } : x)

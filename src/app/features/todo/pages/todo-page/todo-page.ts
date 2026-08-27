@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal, untracked } from '@angular/core';
 import { TodoSidebarList } from '../../components/todo-sidebar-list/todo-sidebar-list';
 import { ToDoSidebarList } from '../../models/todo-sidebar-list.model';
 import { TodoListView } from '../../components/todo-list-view/todo-list-view';
@@ -32,8 +32,9 @@ export class TodoPage implements OnInit {
   currentUser = signal<UserInfo | undefined | null>(undefined);
   isCreateSidebarList = signal<boolean>(false);
 
+  isLoadingLists = signal<boolean>(false);
   page = signal<number>(1);
-  private pageSize = 10;
+  private pageSize = 7;
   totalCount = signal(0);
   totalPages = signal(0);
   hasNext = signal(false);
@@ -47,18 +48,16 @@ export class TodoPage implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.currentUser.set(await this.authService.getCurrentUserInfo());
-    await this.loadLists();
   }
 
   constructor() {
     effect(() => {
-      const listChanged = this.todoStore.listChanged();
+      const listChaned = this.todoStore.listChanged();
 
-      if (listChanged === null) {
-        return;
-      }
+      untracked(() => {
+        this.loadLists(true);
 
-      this.loadLists();
+      })
     })
 
     effect(() => {
@@ -72,13 +71,23 @@ export class TodoPage implements OnInit {
     })
   }
 
-  loadLists(): void {
+  loadLists(isFirstPage: boolean): void {
+    if (this.isLoadingLists()) return;
+    if (!isFirstPage && !this.hasNext()) return;
+
+    const pageToLoad = isFirstPage ? 1 : this.page() + 1;
+
+    if (isFirstPage) this.todoStore.clearSidebarLists();
+
+    this.isLoadingLists.set(true);
+
     this.todoListService.getUserSidebarLists({
-      page: this.page(), pageSize: this.pageSize
+      page: pageToLoad, pageSize: this.pageSize
     }).subscribe({
       next: response => {
-        this.todoStore.setSidebarLists(response.items);
+        this.todoStore.appendSidebarLists(response.items);
 
+        this.page.set(response.page);
         this.totalCount.set(response.totalCount);
         this.totalPages.set(response.totalPages);
         this.hasNext.set(response.hasNextPage);
@@ -87,9 +96,38 @@ export class TodoPage implements OnInit {
         if (this.todoStore.selectedListId() === null && response.items.length > 0) {
           this.todoStore.selectListId(response.items[0].id);
         }
+
+        this.isLoadingLists.set(false);
+      },
+      error: error => {
+        this.isLoadingLists.set(false);
+        this.onActionError(error.error as ErrorResponse);
       }
     });
   };
+
+  onSidebarScroll(event: Event): void {
+    const container = event.target as HTMLLIElement;
+
+    if (container.scrollTop === 0) {
+      return;
+    }
+
+    if (container.scrollHeight <= container.clientHeight) {
+      return;
+    }
+
+    console.log(container.clientHeight);
+    console.log(container.scrollTop);
+    console.log(container.scrollHeight);
+    
+
+    const isAtBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 2;
+
+    if (isAtBottom) {
+      this.loadLists(false);
+    }
+  }
 
   onUserExitButtonClick() {
     this.authService.logout();
@@ -103,18 +141,13 @@ export class TodoPage implements OnInit {
     };
 
     this.todoListService.createList(request).subscribe({
-      next: response => {
-        this.loadLists();
+      next: () => {
+        this.loadLists(true);
         this.isCreateSidebarList.set(false);
       },
       error: error => {
         this.onCreateListCancel();
-        const errorResponse = error.error as ErrorResponse;
-        this.statusNotification.set({
-          type: 'error',
-          message: errorResponse.Message,
-          errors: errorResponse.Errors,
-        });
+        this.onActionError(error.error as ErrorResponse)
       }
     })
   }

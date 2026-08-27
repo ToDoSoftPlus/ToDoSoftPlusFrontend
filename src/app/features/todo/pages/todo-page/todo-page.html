@@ -36,11 +36,15 @@
         <hr />
 
         @if (sidebarLists) {
-        <div class="todo-sidebar__user-lists-wrapper">
+        <div class="todo-sidebar__user-lists-wrapper" (scroll)="onSidebarScroll($event)">
             @for (list of sidebarLists; track list.id) {
             <app-todo-sidebar-list [toDoSidebarList]="list" />
             }
-
+            @if (isLoadingLists()) {
+            <div class="todo-sidebar__user-lists-loading text-center py-2">...Loading</div>
+            }
+        </div>
+        <div class="todo-sidebar__user-create-list-wrapper">
             @if (isCreateSidebarList()) {
             <app-create-todo-sidebar-list (onSubmit)="onCreateListSubmit($event)" (onCancel)="onCreateListCancel()" />
             }
