@@ -3,5 +3,12 @@
     <form class="create-todo-sidebar-list__form" (submit)="onSubmitForm($event)" (keydown.escape)="onCancel.emit()">
         <input class="create-todo-sidebar-list__input-title" type="text" [formField]="createSidebarListForm.title"
             (blur)="onCancel.emit()" appAutofocus>
+        @if (createSidebarListForm.title().invalid()) {
+        <div class="create-todo-sidebar-list__input-errors error">
+            @for (error of createSidebarListForm.title().errors(); track error.kind) {
+            <span>{{ error.message}}</span>
+            }
+        </div>
+        }
     </form>
 </div>
