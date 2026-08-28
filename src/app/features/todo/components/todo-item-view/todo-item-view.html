@@ -41,13 +41,15 @@
                         <input type="checkbox" [checked]="subItem.isCompleted" disabled>
                         <span></span>
                     </label>
-                    <input class="todo-item-view__sub-item-description w-full text-gray-500 text-sm"
-                        type="text" [value]="subItem.description" disabled>
+                    <input class="todo-item-view__sub-item-description w-full text-gray-500 text-sm" type="text"
+                        [value]="subItem.description" disabled>
                     <div class="todo-item-view__sub-item-actions flex gap-1 ml-auto">
-                        <button class="todo-item-view__sub-item-edit edit-button px-1" (click)="onEditSubItemButtonClick(subItem)">
+                        <button class="todo-item-view__sub-item-edit edit-button px-1"
+                            (click)="onEditSubItemButtonClick(subItem)">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <button class="todo-item-view__sub-item-delete delete-button px-1 text-gray-200" (click)="onDeleteSubItem(subItem.id)">
+                        <button class="todo-item-view__sub-item-delete delete-button px-1 text-gray-200"
+                            (click)="onDeleteSubItem(subItem.id)">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
@@ -76,15 +78,17 @@
                 }
             </div>
             <div class="todo-item-view__sub-item-action-add-wrapper">
-                <button class="todo-item-view__sub-item-action-add text-blue-500" (click)="isCreatingSubItem.set(true)">
+                <button class="todo-item-view__sub-item-action-add text-blue-500 cursor-pointer"
+                    (click)="isCreatingSubItem.set(true)">
                     <i class="bi bi-plus-lg "></i>
                     Add sub task
                 </button>
             </div>
         </div>
-        <div class="todo-item-view__card">
-            <input class="todo-item-view__isMyDay" type="checkbox" [formField]="todoItemForm.isMyDay">
-        </div>
+        <label class="todo-item-view__card todo-item-view__checkbox-is-my-day">
+            <input type="checkbox" [formField]="todoItemForm.isMyDay">
+            <span>Add to 'my day'</span>
+        </label>
         <div class="todo-item-view__card">
             <textarea class="todo-item-view-description w-full outline-0 text-wrap" type="text" placeholder="Note"
                 rows="3" [formField]="todoItemForm.description"></textarea>

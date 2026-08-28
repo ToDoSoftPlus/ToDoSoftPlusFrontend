@@ -7,6 +7,10 @@
         padding: 8px;
     }
 
+    &__checkbox-is-my-day:has(input:checked) {
+        border-color: #3069c579;
+    }
+
     &__star {
         cursor: pointer;
 
@@ -29,8 +33,24 @@
         }
     }
 
-    &__sub-item {
+    &__checkbox-is-my-day {
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
 
-        
+        input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        span {
+            color: #6b7280;
+            transition: color 0.2s ease;
+        }
+
+        input:checked+span {
+            color: #3b82f6;
+        }
     }
 }
