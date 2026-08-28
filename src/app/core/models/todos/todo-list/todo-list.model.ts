@@ -1,5 +1,12 @@
 import { ToDoItem } from "../todo-item/todo-item.model";
 
+export enum ToDoListType {
+    Regular = 'Regular',
+    MyDay = 'My day',
+    Important = 'Important',
+    Task = 'Task'
+}
+
 export interface ToDoList {
     id: number,
     title: string,

@@ -1,14 +1,12 @@
-import { Component, effect, inject, input, OnInit, output, signal } from '@angular/core';
+import { Component, effect, inject, input, OnInit, output, signal, untracked } from '@angular/core';
 import { TodoItemList } from '../todo-item-list/todo-item-list';
-import { ToDoList, UpdateToDoListRequest } from '../../../../core/models/todos/todo-list/todo-list.model';
+import { ToDoList, ToDoListType, UpdateToDoListRequest } from '../../../../core/models/todos/todo-list/todo-list.model';
 import { TodoListService } from '../../../../core/services/todo-list';
 import { form, maxLength, minLength, required, FormField } from '@angular/forms/signals';
 import { ErrorResponse } from '../../../../core/models/common/error-response.model';
 import { TodoItemService } from '../../../../core/services/todo-item';
 import { CreateToDoItemRequest, ToDoItem } from '../../../../core/models/todos/todo-item/todo-item.model';
-import { PagedResponse } from '../../../../core/models/common/paged-response.model';
 import { TodoStore } from '../../../../core/stores/todo.store';
-import { ToDoSidebarList } from '../../models/todo-sidebar-list.model';
 import { Pagination } from '../../../../shared/components/pagination/pagination';
 
 @Component({
@@ -22,9 +20,10 @@ export class TodoListView {
 
   toDoListService = inject(TodoListService);
   toDoItemService = inject(TodoItemService);
-  todoStore = inject(TodoStore);
+  toDoStore = inject(TodoStore);
 
   toDoList = signal<ToDoList | undefined>(undefined);
+  systemListTitle = signal<string>('');
   toDoItems = signal<ToDoItem[]>([]);
 
   page = signal<number>(1);
@@ -44,9 +43,10 @@ export class TodoListView {
   createItemModel = signal<CreateToDoItemRequest>({
     title: '',
     description: '',
+    isMyDay: false,
     isCompleted: false,
     isImportant: false,
-    toDoListId: 0,
+    toDoListId: null,
     completedAt: null
   })
 
@@ -63,18 +63,26 @@ export class TodoListView {
 
   constructor() {
     effect(() => {
-      const listId = this.todoStore.selectedListId();
+      const listId = this.toDoStore.selectedListId();
+      const listType = this.toDoStore.selectedListType();
 
-      if (!listId) {
+      if (!listId || !listType) {
         return;
       }
 
-      this.loadList(listId);
-      this.loadListItems(listId, this.page());
+      if (listType === ToDoListType.Regular) {
+        this.loadList(listId);
+      }
+      else {
+        this.systemListTitle.set(listType);
+        this.toDoList.set(undefined);
+      }
+
+      this.loadListItems(listId, this.page(), listType);
     })
 
     effect(() => {
-      const changedItem = this.todoStore.itemUpdated();
+      const changedItem = this.toDoStore.itemUpdated();
 
       if (!changedItem) {
         return;
@@ -84,13 +92,13 @@ export class TodoListView {
     })
 
     effect(() => {
-      const itemDeleted = this.todoStore.itemDeleted();
+      const itemDeleted = this.toDoStore.itemDeleted();
 
       if (!itemDeleted) {
         return;
       }
 
-      this.loadListItems(this.toDoList()?.id!, this.page());
+      this.loadListItems(this.toDoStore.selectedListId(), this.page(), this.toDoStore.selectedListType()!);
     })
   }
 
@@ -121,11 +129,25 @@ export class TodoListView {
     })
   }
 
-  loadListItems(listId: number | null, page: number): void {
-    if (listId === null)
-      return;
+  loadListItems(listId: number | null, page: number, listType: ToDoListType): void {
+    let request;
 
-    this.toDoItemService.getItemsInList(listId, { page: page, pageSize: this.pageSize }).subscribe({
+    switch (listType) {
+      case ToDoListType.MyDay:
+        request = this.toDoItemService.getMyDayItems({ page: page, pageSize: this.pageSize });
+        break;
+      case ToDoListType.Important:
+        request = this.toDoItemService.getImportantItems({ page: page, pageSize: this.pageSize });
+        break;
+      case ToDoListType.Task:
+        request = this.toDoItemService.getTaskItems({ page: page, pageSize: this.pageSize });
+        break;
+      case ToDoListType.Regular:
+        request = this.toDoItemService.getItemsInList(listId!, { page: page, pageSize: this.pageSize });
+        break;
+    }
+
+    request.subscribe({
       next: response => {
         this.toDoItems.set(response.items);
         this.page.set(response.page);
@@ -174,8 +196,8 @@ export class TodoListView {
 
         this.isEditList.set(false);
 
-        this.todoStore.updateSidebarTitleList(response.id, response.title);
-        this.todoStore.notifyListChanged();
+        this.toDoStore.updateSidebarTitleList(response.id, response.title);
+        this.toDoStore.notifyListChanged();
       },
       error: error => {
         const errorResponse = error.error as ErrorResponse;
@@ -194,14 +216,14 @@ export class TodoListView {
   }
 
   onListDeleteButtonClick(): void {
-    const listId = this.todoStore.selectedListId();
+    const listId = this.toDoStore.selectedListId();
     if (listId === null)
       return;
 
     this.toDoListService.deleteList(listId).subscribe({
       next: () => {
-        this.todoStore.selectListId(null);
-        this.todoStore.notifyListChanged();
+        this.toDoStore.selectListId(null);
+        this.toDoStore.notifyListChanged();
       }
     })
   }
@@ -213,10 +235,37 @@ export class TodoListView {
       return;
     }
 
+    const listType = this.toDoStore.selectedListType()
+
+    if (!listType) return;
+
+    switch (listType) {
+      case ToDoListType.MyDay:
+        this.createItemModel.update(model => ({ ...model, IsMyDay: true, toDoListId: null }))
+        break;
+      case ToDoListType.Important:
+        this.createItemModel.update(model => ({ ...model, isImportant: true, toDoListId: null }))
+        break;
+      case ToDoListType.Task:
+        this.createItemModel.update(model => ({ ...model, toDoListId: null }))
+        break;
+    }
+
     this.toDoItemService.createItem(this.createItemModel()).subscribe({
       next: response => {
-        this.loadListItems(response.toDoListId, this.page());
-        this.todoStore.incrementItemCount(response.toDoListId);
+        this.loadListItems(response.toDoListId, this.page(), listType);
+        switch (listType) {
+          case ToDoListType.MyDay:
+            this.toDoStore.incrementMyDayListItemCount();
+            this.toDoStore.incrementTaskListItemCount();
+            break;
+          case ToDoListType.Important:
+            this.toDoStore.incrementImportantListItemCount();
+            this.toDoStore.incrementTaskListItemCount();
+            break;
+          case ToDoListType.Task: this.toDoStore.incrementTaskListItemCount(); break;
+          case ToDoListType.Regular: this.toDoStore.incrementSidebarItemCount(response.toDoListId!); break;
+        }
       },
       error: error => {
         const errorResponse = error.error as ErrorResponse;
@@ -241,5 +290,9 @@ export class TodoListView {
         completedAt: null
       }
     })
+  }
+
+  IsListTypeReqular(): boolean {
+    return this.toDoStore.selectedListType() === ToDoListType.Regular;
   }
 }

@@ -1,7 +1,7 @@
 @let list = toDoSidebarList();
 
 <div class="todo-sidebar-list flex items-center my-2 py-1" [class.active]="todoStore.selectedListId() == list.id"
-    (click)="todoStore.selectListId(list.id)">
+    (click)="onSidebarClick()">
     <img class="todo-sidebar-list__image mr-2" src="ListIcon.png" alt="List icon" width="28px">
     <p class="todo-sidebar-list__text text-sm">{{list.title}}</p>
 

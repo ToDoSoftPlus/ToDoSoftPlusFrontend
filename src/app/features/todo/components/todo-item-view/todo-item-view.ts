@@ -3,10 +3,11 @@ import { TodoStore } from '../../../../core/stores/todo.store';
 import { ToDoItem, UpdateToDoItemRequest } from '../../../../core/models/todos/todo-item/todo-item.model';
 import { form, FormField, required } from '@angular/forms/signals';
 import { TodoItemService } from '../../../../core/services/todo-item';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgPlural } from '@angular/common';
 import { CreateToDoSubItemRequest, ToDoSubItem, UpdateToDoSubItemRequest } from '../../../../core/models/todos/tood-sub-item/todo-sub-item.model';
 import { TodoSubItemService } from '../../../../core/services/todo-sub-item';
 import { AutofocusDirective } from '../../../../shared/directives/auto-focus.derective';
+import { ToDoListType } from '../../../../core/models/todos/todo-list/todo-list.model';
 
 @Component({
   selector: 'app-todo-item-view',
@@ -19,14 +20,16 @@ export class TodoItemView {
   todoItemService = inject(TodoItemService);
   todoSubItemService = inject(TodoSubItemService);
 
+  todoItemOriginal: ToDoItem | null = null;
   todoItemModel = signal<UpdateToDoItemRequest>({
     id: 0,
     title: '',
     description: '',
     completedAt: null,
+    isMyDay: false,
     isCompleted: false,
     isImportant: false,
-    toDoListId: 0
+    toDoListId: null
   });
   todoItemForm = form(this.todoItemModel, (schema) => {
 
@@ -62,11 +65,13 @@ export class TodoItemView {
       if (item === null)
         return
 
+      this, this.todoItemOriginal = item;
       this.todoItemModel.set({
         id: item.id,
         title: item.title,
         description: item.description ?? '',
         completedAt: null,
+        isMyDay: item.isMyDay,
         isCompleted: item.isCompleted,
         isImportant: item.isImportant,
         toDoListId: item.toDoListId
@@ -100,23 +105,49 @@ export class TodoItemView {
     if (this.todoItemForm().invalid())
       return;
 
+    const listType = this.todoStore.selectedListType();
+
+    if (!listType)
+      return;
+
     this.todoItemService.updateItem(this.todoItemModel()).subscribe({
       next: response => {
         this.todoStore.notifyItemChanged(response);
+
+        if (this.todoItemOriginal?.isMyDay != this.todoItemModel().isMyDay)
+          this.todoItemModel().isMyDay ?
+            this.todoStore.incrementMyDayListItemCount() :
+            this.todoStore.decrementMyDayListItemCount()
+
+        if (this.todoItemOriginal?.isImportant != this.todoItemModel().isImportant)
+          this.todoItemModel().isImportant ?
+            this.todoStore.incrementImportantListItemCount() :
+            this.todoStore.decrementImportantListItemCount()
       }
     })
   }
 
   onDeleteItem(): void {
     const item = this.todoStore.selectedItem();
+    const listType = this.todoStore.selectedListType();
 
-    if (item === null)
+    if (item === null || listType === null)
       return
 
     this.todoItemService.deleteItem(item.id).subscribe({
       next: () => {
         this.todoStore.notifyItemDeleted();
-        this.todoStore.decrementItemCount(item.toDoListId);
+
+        if (item.isMyDay)
+          this.todoStore.decrementMyDayListItemCount();
+
+        if (item.isImportant)
+          this.todoStore.decrementImportantListItemCount();
+
+        if (item.toDoListId)
+          this.todoStore.decrementSidebarItemCount(item.toDoListId);
+        else
+          this.todoStore.decrementTaskListItemCount();
       }
     })
   }
@@ -186,13 +217,5 @@ export class TodoItemView {
         this.todoSubItemsModel.update(model => model.filter(subItem => subItem.id !== subItemId));
       }
     });
-  }
-
-  onSubItemTitleChanged(id: number, title: string): void {
-    this.todoSubItemsModel.update(model => model.map(subItem => subItem.id === id ? { ...subItem, title } : subItem));
-  }
-
-  onSubItemCompletedChanged(id: number, isCompleted: boolean): void {
-    this.todoSubItemsModel.update(model => model.map(subItem => subItem.id === id ? { ...subItem, isCompleted } : subItem));
   }
 }

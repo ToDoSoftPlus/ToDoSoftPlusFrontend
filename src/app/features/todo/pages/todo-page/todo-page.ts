@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit, signal, untracked } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal, untracked } from '@angular/core';
 import { TodoSidebarList } from '../../components/todo-sidebar-list/todo-sidebar-list';
 import { ToDoSidebarList } from '../../models/todo-sidebar-list.model';
 import { TodoListView } from '../../components/todo-list-view/todo-list-view';
@@ -6,7 +6,7 @@ import { AuthSevice } from '../../../../core/services/auth';
 import { Router } from '@angular/router';
 import { UserInfo } from '../../../../core/models/user/user-info.model';
 import { TodoListService } from '../../../../core/services/todo-list';
-import { CreateToDoListRequest, ToDoList } from '../../../../core/models/todos/todo-list/todo-list.model';
+import { CreateToDoListRequest, ToDoList, ToDoListType } from '../../../../core/models/todos/todo-list/todo-list.model';
 import { ErrorResponse } from '../../../../core/models/common/error-response.model';
 import { StatusNotificationData } from '../../../../shared/models/status-notification.model';
 import { StatusNotification } from "../../../../shared/components/status-notification/status-notification";
@@ -14,6 +14,7 @@ import { CreateToDoSidebarList } from '../../components/create-todo-sidebar-list
 import { CreateToDoSidebarListModel } from '../../models/create-todo-sidebar-list.model';
 import { TodoStore } from '../../../../core/stores/todo.store';
 import { TodoItemView } from '../../components/todo-item-view/todo-item-view';
+import { TodoItemService } from '../../../../core/services/todo-item';
 
 @Component({
   selector: 'app-todo-page',
@@ -25,6 +26,7 @@ import { TodoItemView } from '../../components/todo-item-view/todo-item-view';
 export class TodoPage implements OnInit {
   authService = inject(AuthSevice);
   todoListService = inject(TodoListService);
+  todoItemService = inject(TodoItemService);
   router = inject(Router);
   todoStore = inject(TodoStore);
   statusNotification = signal<StatusNotificationData | null>(null);
@@ -40,23 +42,37 @@ export class TodoPage implements OnInit {
   hasNext = signal(false);
   hasPrevious = signal(false);
 
-  toDoSidebarSystemLists: ToDoSidebarList[] = [
-    { id: 1, title: "list1-s", countItems: 1 },
-    { id: 2, title: "list2-s", countItems: 10 },
-    { id: 3, title: "list3-s", countItems: 100 },
-  ]
+  myDaySidebarList = computed<ToDoSidebarList>(() => ({
+    id: -1,
+    title: "My Day",
+    countItems: this.todoStore.myDayListCountItems()
+  }));
+
+  importantSidebarList = computed<ToDoSidebarList>(() => ({
+    id: -2,
+    title: 'Important',
+    countItems: this.todoStore.importantListCountItems()
+  }));
+
+  taskSidebarList = computed<ToDoSidebarList>(() => ({
+    id: -3,
+    title: 'Task',
+    countItems: this.todoStore.taskListCountItems()
+  }));
 
   async ngOnInit(): Promise<void> {
     this.currentUser.set(await this.authService.getCurrentUserInfo());
+    this.loadMyDayCountItems();
+    this.loadImportantCountItems();
+    this.loadTaskCountItems();
   }
 
   constructor() {
     effect(() => {
-      const listChaned = this.todoStore.listChanged();
+      this.todoStore.listChanged();
 
       untracked(() => {
         this.loadLists(true);
-
       })
     })
 
@@ -93,8 +109,9 @@ export class TodoPage implements OnInit {
         this.hasNext.set(response.hasNextPage);
         this.hasPrevious.set(response.hasPreviousPage);
 
-        if (this.todoStore.selectedListId() === null && response.items.length > 0) {
-          this.todoStore.selectListId(response.items[0].id);
+        if (this.todoStore.selectedListId() === null) {
+          this.todoStore.selectListId(this.myDaySidebarList().id);
+          this.todoStore.selectListType(ToDoListType.MyDay)
         }
 
         this.isLoadingLists.set(false);
@@ -105,6 +122,39 @@ export class TodoPage implements OnInit {
       }
     });
   };
+
+  loadMyDayCountItems(): void {
+    this.todoItemService.getMyDayCountItems().subscribe({
+      next: response => {
+        this.todoStore.setMyDayListCountItems(response);
+      },
+      error: error => {
+        this.onActionError(error.error as ErrorResponse);
+      }
+    })
+  }
+
+  loadImportantCountItems(): void {
+    this.todoItemService.getImportantCountItems().subscribe({
+      next: response => {
+        this.todoStore.setImportantListCountItems(response);
+      },
+      error: error => {
+        this.onActionError(error.error as ErrorResponse);
+      }
+    })
+  }
+
+  loadTaskCountItems(): void {
+    this.todoItemService.getTaskCountItems().subscribe({
+      next: response => {
+        this.todoStore.setTaskListCountItems(response);
+      },
+      error: error => {
+        this.onActionError(error.error as ErrorResponse);
+      }
+    })
+  }
 
   onSidebarScroll(event: Event): void {
     const container = event.target as HTMLLIElement;
@@ -120,7 +170,7 @@ export class TodoPage implements OnInit {
     console.log(container.clientHeight);
     console.log(container.scrollTop);
     console.log(container.scrollHeight);
-    
+
 
     const isAtBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 2;
 

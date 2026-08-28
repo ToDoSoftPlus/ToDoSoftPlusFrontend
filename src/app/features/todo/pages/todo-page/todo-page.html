@@ -3,17 +3,17 @@
 @let selectedItem = this.todoStore.selectedItem();
 
 <div class="todo-page flex flex-row h-full">
-    <div class="todo-sidebar px-5 flex flex-col mt-5">
+    <div class="todo-sidebar px-5 flex flex-col mt-5 w-[350px]">
         <div class="todo-sidebar__user-wrapper flex flex-row mb-4">
             <img class="todo-sidebar__user-image mr-2" src="UserIcon.png" alt="User icon" width="48px">
             <div class="todo-sidebar__user-info-wrapper flex flex-col justify-center">
-                <p class="todo-sidebar__user-info-name font-bold">{{currentUser()?.name}}</p>
+                <div class="todo-sidebar__user-info-top flex gap-2">
+                    <p class="todo-sidebar__user-info-name font-bold">{{currentUser()?.name}}</p>
+                    <button class="todo-sidebar__user-logout-button px-3" (click)="onUserExitButtonClick()">
+                        Exit
+                    </button>
+                </div>
                 <p class="todo-sidebar__user-info-gmail text-sm text-gray-500">{{currentUser()?.email}}</p>
-            </div>
-            <div class="todo-sidebar__user-logout-wrapper m-auto">
-                <button class="todo-sidebar__user-logout-button py-1 px-4" (click)="onUserExitButtonClick()">
-                    Exit
-                </button>
             </div>
         </div>
 
@@ -28,9 +28,9 @@
         </div>
 
         <div class="todo-sidebar__system-lists-wrapper">
-            @for (systemList of toDoSidebarSystemLists; track systemList.id) {
-            <app-todo-sidebar-list [toDoSidebarList]="systemList" />
-            }
+            <app-todo-sidebar-list [toDoSidebarList]="myDaySidebarList()" />
+            <app-todo-sidebar-list [toDoSidebarList]="importantSidebarList()" />
+            <app-todo-sidebar-list [toDoSidebarList]="taskSidebarList()" />
         </div>
 
         <hr />
