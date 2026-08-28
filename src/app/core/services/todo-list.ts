@@ -13,7 +13,7 @@ import { CreateToDoListRequest, ToDoList, UpdateToDoListRequest } from '../model
 export class TodoListService {
     private apiUrl = environment.apiUrl;
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) { }
 
     getUserSidebarLists(paginationRequest: PaginationRequest): Observable<PagedResponse<ToDoSidebarList>> {
         const params = new HttpParams()
@@ -25,7 +25,19 @@ export class TodoListService {
             { params: params }
         )
     }
-    
+
+    searchSidebarLists(title: string, paginationRequest: PaginationRequest): Observable<PagedResponse<ToDoSidebarList>> {
+        const params = new HttpParams()
+            .set('page', paginationRequest.page)
+            .set('pageSize', paginationRequest.pageSize)
+            .set('title', title);
+
+        return this.http.get<PagedResponse<ToDoSidebarList>>(
+            `${this.apiUrl}/v1/todo-list/sidebar/search`,
+            { params: params }
+        )
+    }
+
     createList(request: CreateToDoListRequest): Observable<ToDoList> {
         return this.http.post<ToDoList>(
             `${this.apiUrl}/v1/todo-list`,

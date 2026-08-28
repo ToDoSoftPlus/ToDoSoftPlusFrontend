@@ -19,9 +19,9 @@ export class CreateToDoSidebarList {
   });
 
   createSidebarListForm = form(this.createSidebarListModel, (schema) => {
-    required(schema.title);
-    minLength(schema.title, 3);
-    maxLength(schema.title, 100);
+    required(schema.title, { message: "title is required" });
+    minLength(schema.title, 3, { message: "title must be at least 3 characters" });
+    maxLength(schema.title, 100, { message: "title must be smaller than 100 characters" });
   });
 
   onSubmitForm(event: Event): void {

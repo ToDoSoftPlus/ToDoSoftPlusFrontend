@@ -15,11 +15,12 @@ import { CreateToDoSidebarListModel } from '../../models/create-todo-sidebar-lis
 import { TodoStore } from '../../../../core/stores/todo.store';
 import { TodoItemView } from '../../components/todo-item-view/todo-item-view';
 import { TodoItemService } from '../../../../core/services/todo-item';
+import { form, FormField, required } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-todo-page',
   standalone: true,
-  imports: [TodoSidebarList, CreateToDoSidebarList, TodoListView, TodoItemView, StatusNotification],
+  imports: [TodoSidebarList, CreateToDoSidebarList, TodoListView, TodoItemView, StatusNotification, FormField],
   templateUrl: './todo-page.html',
   styleUrl: './todo-page.scss',
 })
@@ -60,6 +61,15 @@ export class TodoPage implements OnInit {
     countItems: this.todoStore.taskListCountItems()
   }));
 
+  isSearching = signal<boolean>(false);
+  searchModel = signal({
+    search: ''
+  });
+
+  searchForm = form(this.searchModel, (schema) => {
+    required(schema.search);
+  });
+
   async ngOnInit(): Promise<void> {
     this.currentUser.set(await this.authService.getCurrentUserInfo());
     this.loadMyDayCountItems();
@@ -97,9 +107,17 @@ export class TodoPage implements OnInit {
 
     this.isLoadingLists.set(true);
 
-    this.todoListService.getUserSidebarLists({
-      page: pageToLoad, pageSize: this.pageSize
-    }).subscribe({
+    let request;
+
+    if (this.isSearching())
+      request = this.todoListService.searchSidebarLists(
+        this.searchModel().search.trim(),
+        { page: pageToLoad, pageSize: this.pageSize });
+    else
+      request = this.todoListService.getUserSidebarLists(
+        { page: pageToLoad, pageSize: this.pageSize });
+
+    request.subscribe({
       next: response => {
         this.todoStore.appendSidebarLists(response.items);
 
@@ -167,16 +185,12 @@ export class TodoPage implements OnInit {
       return;
     }
 
-    console.log(container.clientHeight);
-    console.log(container.scrollTop);
-    console.log(container.scrollHeight);
-
-
     const isAtBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 2;
 
-    if (isAtBottom) {
-      this.loadLists(false);
-    }
+    if (!isAtBottom)
+      return;
+
+    this.loadLists(false);
   }
 
   onUserExitButtonClick() {
@@ -204,6 +218,24 @@ export class TodoPage implements OnInit {
 
   onCreateListCancel(): void {
     this.isCreateSidebarList.set(false);
+  }
+
+  onSearchList(event: Event): void {
+    event.preventDefault();
+
+    if (this.searchForm().invalid())
+      return;
+
+    this.isSearching.set(true);
+    this.todoStore.clearSidebarLists();
+    this.loadLists(true);
+  }
+
+  onClearSearchList(): void {
+    this.searchModel.set({ search: '' });
+    this.isSearching.set(false);
+    this.todoStore.clearSidebarLists();
+    this.loadLists(true);
   }
 
   onActionError(errorResponse: ErrorResponse): void {
