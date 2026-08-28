@@ -28,9 +28,9 @@
         </div>
 
         <div class="todo-sidebar__system-lists-wrapper">
-            @for (systemList of toDoSidebarSystemLists; track systemList.id) {
-            <app-todo-sidebar-list [toDoSidebarList]="systemList" />
-            }
+            <app-todo-sidebar-list [toDoSidebarList]="myDaySidebarList()" />
+            <app-todo-sidebar-list [toDoSidebarList]="importantSidebarList()" />
+            <app-todo-sidebar-list [toDoSidebarList]="taskSidebarList()" />
         </div>
 
         <hr />

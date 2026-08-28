@@ -25,12 +25,48 @@ export class TodoItemService {
 
         return this.http.get<PagedResponse<ToDoItem>>(
             `${this.apiUrl}/v1/todo-item/list/${listId}`,
-            { params: params}
+            { params: params }
         );
     }
 
+    getMyDayItems(request: PaginationRequest): Observable<PagedResponse<ToDoItem>> {
+        const params = new HttpParams()
+            .set('page', request.page)
+            .set('pageSize', request.pageSize);
+
+        return this.http.get<PagedResponse<ToDoItem>>(`${this.apiUrl}/v1/todo-item/my-day`, { params: params });
+    }
+
+    getMyDayCountItems(): Observable<number> {
+        return this.http.get<number>(`${this.apiUrl}/v1/todo-item/my-day/count`);
+    }
+
+    getImportantItems(request: PaginationRequest): Observable<PagedResponse<ToDoItem>> {
+        const params = new HttpParams()
+            .set('page', request.page)
+            .set('pageSize', request.pageSize);
+
+        return this.http.get<PagedResponse<ToDoItem>>(`${this.apiUrl}/v1/todo-item/important`, { params: params });
+    }
+
+    getImportantCountItems(): Observable<number> {
+        return this.http.get<number>(`${this.apiUrl}/v1/todo-item/important/count`);
+    }
+
+    getTaskItems(request: PaginationRequest): Observable<PagedResponse<ToDoItem>> {
+        const params = new HttpParams()
+            .set('page', request.page)
+            .set('pageSize', request.pageSize);
+
+        return this.http.get<PagedResponse<ToDoItem>>(`${this.apiUrl}/v1/todo-item/task`, { params: params });
+    }
+
+    getTaskCountItems(): Observable<number> {
+        return this.http.get<number>(`${this.apiUrl}/v1/todo-item/task/count`);
+    }
+
     updateItem(request: UpdateToDoItemRequest): Observable<ToDoItem> {
-        return this.http.put<ToDoItem>( `${this.apiUrl}/v1/todo-item`, request);
+        return this.http.put<ToDoItem>(`${this.apiUrl}/v1/todo-item`, request);
     }
 
     deleteItem(itemId: number) {

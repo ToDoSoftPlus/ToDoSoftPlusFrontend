@@ -83,6 +83,9 @@
             </div>
         </div>
         <div class="todo-item-view__card">
+            <input class="todo-item-view__isMyDay" type="checkbox" [formField]="todoItemForm.isMyDay">
+        </div>
+        <div class="todo-item-view__card">
             <textarea class="todo-item-view-description w-full outline-0 text-wrap" type="text" placeholder="Note"
                 rows="3" [formField]="todoItemForm.description"></textarea>
         </div>
