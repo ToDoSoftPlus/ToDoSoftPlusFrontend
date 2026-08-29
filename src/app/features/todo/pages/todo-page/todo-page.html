@@ -20,10 +20,23 @@
         <div class="todo-sidebar__search-lists-wrapper mb-4">
             <form class="todo-sidebar__search-lists-form flex items-center" (submit)="onSearchList($event)">
                 <input class="todo-sidebar__search-lists-input primary-input" type="text" placeholder="Search"
-                    [formField]="searchForm.search" (keydown.escape)="onClearSearchList()"/>
+                    [formField]="searchForm.search" (keydown.escape)="onClearSearchList()" />
                 <button class="todo-sidebar__search-lists-button" type="submit">
                     <img class="todo-sidebar__search-lists-icon" src="SearchIcon.svg" alt="search-icon">
                 </button>
+            </form>
+        </div>
+
+        <div class="todo-sidebar__sort-wrapper mb-4">
+            <form class="todo-sidebar__sort-form flex" (submit)="onApplyFilterLists($event)">
+                <div>
+                    <input type="date" [formField]="filterListsForm.startDate">
+                    <input type="date" [formField]="filterListsForm.endDate">
+                </div>
+                <div>
+                    <button type="submit">Apply</button>
+                    <button type="button" (click)="onClearFilterLists()">Clear</button>
+                </div>
             </form>
         </div>
 

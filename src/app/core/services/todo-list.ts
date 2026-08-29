@@ -6,6 +6,7 @@ import { PagedResponse } from '../models/common/paged-response.model';
 import { PaginationRequest } from '../models/common/pagination-request.model';
 import { ToDoSidebarList } from '../../features/todo/models/todo-sidebar-list.model';
 import { CreateToDoListRequest, ToDoList, UpdateToDoListRequest } from '../models/todos/todo-list/todo-list.model';
+import { FilterListsRequest } from '../models/common/filtering-list-request.model';
 
 @Injectable({
     providedIn: "root"
@@ -15,10 +16,20 @@ export class TodoListService {
 
     constructor(private http: HttpClient) { }
 
-    getUserSidebarLists(paginationRequest: PaginationRequest): Observable<PagedResponse<ToDoSidebarList>> {
-        const params = new HttpParams()
+    getUserSidebarLists(paginationRequest: PaginationRequest, filterListsRequest: FilterListsRequest | null): Observable<PagedResponse<ToDoSidebarList>> {
+        let params = new HttpParams()
             .set('page', paginationRequest.page)
             .set('pageSize', paginationRequest.pageSize);
+
+        if (filterListsRequest !== null) {
+            if (filterListsRequest.startDate) {
+                params = params.set('startDate', filterListsRequest.startDate);
+            }
+
+            if (filterListsRequest.endDate) {
+                params = params.set('endDate', filterListsRequest.endDate);
+            }
+        }
 
         return this.http.get<PagedResponse<ToDoSidebarList>>(
             `${this.apiUrl}/v1/todo-list/sidebar`,
@@ -26,11 +37,21 @@ export class TodoListService {
         )
     }
 
-    searchSidebarLists(title: string, paginationRequest: PaginationRequest): Observable<PagedResponse<ToDoSidebarList>> {
-        const params = new HttpParams()
+    searchSidebarLists(title: string, paginationRequest: PaginationRequest, filterListsRequest: FilterListsRequest | null): Observable<PagedResponse<ToDoSidebarList>> {
+        let params = new HttpParams()
             .set('page', paginationRequest.page)
             .set('pageSize', paginationRequest.pageSize)
             .set('title', title);
+
+        if (filterListsRequest !== null) {
+            if (filterListsRequest.startDate) {
+                params = params.set('startDate', filterListsRequest.startDate);
+            }
+
+            if (filterListsRequest.endDate) {
+                params = params.set('endDate', filterListsRequest.endDate);
+            }
+        }
 
         return this.http.get<PagedResponse<ToDoSidebarList>>(
             `${this.apiUrl}/v1/todo-list/sidebar/search`,

@@ -16,6 +16,8 @@ import { TodoStore } from '../../../../core/stores/todo.store';
 import { TodoItemView } from '../../components/todo-item-view/todo-item-view';
 import { TodoItemService } from '../../../../core/services/todo-item';
 import { form, FormField, required } from '@angular/forms/signals';
+import { FilterListsRequest } from '../../../../core/models/common/filtering-list-request.model';
+import { FilterListsFormModel } from '../../models/filter-lists-form.model';
 
 @Component({
   selector: 'app-todo-page',
@@ -70,6 +72,14 @@ export class TodoPage implements OnInit {
     required(schema.search);
   });
 
+  isFilterLists = signal<boolean>(false);
+  filterListsModel = signal<FilterListsFormModel>({
+    startDate: null,
+    endDate: null
+  });
+  filterListsForm = form(this.filterListsModel, (schema) => {
+  });
+
   async ngOnInit(): Promise<void> {
     this.currentUser.set(await this.authService.getCurrentUserInfo());
     this.loadMyDayCountItems();
@@ -108,14 +118,27 @@ export class TodoPage implements OnInit {
     this.isLoadingLists.set(true);
 
     let request;
+    const filterRequest: FilterListsRequest | null =
+      this.isFilterLists() ?
+        {
+          startDate: this.formatDate(this.filterListsModel().startDate),
+          endDate: this.formatDate(this.filterListsModel().endDate)
+        } :
+        null
 
-    if (this.isSearching())
+    if (this.isSearching()) {
       request = this.todoListService.searchSidebarLists(
         this.searchModel().search.trim(),
-        { page: pageToLoad, pageSize: this.pageSize });
-    else
+        { page: pageToLoad, pageSize: this.pageSize },
+        filterRequest
+      );
+    }
+    else {
       request = this.todoListService.getUserSidebarLists(
-        { page: pageToLoad, pageSize: this.pageSize });
+        { page: pageToLoad, pageSize: this.pageSize },
+        filterRequest
+      );
+    }
 
     request.subscribe({
       next: response => {
@@ -238,11 +261,38 @@ export class TodoPage implements OnInit {
     this.loadLists(true);
   }
 
+  onApplyFilterLists(event: Event): void {
+    event.preventDefault();
+
+    if (this.filterListsForm().invalid())
+      return;
+
+    this.isFilterLists.set(true);
+    this.loadLists(true);
+  }
+
+  onClearFilterLists(): void {
+    this.isFilterLists.set(false);
+    this.filterListsModel.set({ startDate: null, endDate: null });
+    this.loadLists(true);
+  }
+
   onActionError(errorResponse: ErrorResponse): void {
     this.statusNotification.set({
       type: 'error',
       message: errorResponse.Message,
       errors: errorResponse.Errors,
     });
+  }
+
+  private formatDate(date: Date | null): string | null {
+    if (!date)
+      return null
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   }
 }
