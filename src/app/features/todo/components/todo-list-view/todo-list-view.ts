@@ -63,22 +63,41 @@ export class TodoListView {
 
   constructor() {
     effect(() => {
-      const listId = this.toDoStore.selectedListId();
       const listType = this.toDoStore.selectedListType();
 
-      if (!listId || !listType) {
+      if (!listType) {
         return;
       }
 
-      if (listType === ToDoListType.Regular) {
-        this.loadList(listId);
-      }
-      else {
-        this.systemListTitle.set(listType);
-        this.toDoList.set(undefined);
+      untracked(() => {
+        this.page.set(1);
+      })
+    })
+
+    effect(() => {
+      const listId = this.toDoStore.selectedListId();
+
+      if (!listId) {
+        return;
       }
 
-      this.loadListItems(listId, this.page(), listType);
+      untracked(() => {
+        const listType = this.toDoStore.selectedListType();
+
+        if (!listId || !listType) {
+          return;
+        }
+
+        if (listType === ToDoListType.Regular) {
+          this.loadList(listId);
+        }
+        else {
+          this.systemListTitle.set(listType);
+          this.toDoList.set(undefined);
+        }
+
+        this.loadListItems(listId, this.page(), listType);
+      })
     })
 
     effect(() => {
