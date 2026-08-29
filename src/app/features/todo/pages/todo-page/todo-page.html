@@ -17,7 +17,7 @@
             </div>
         </div>
 
-        <div class="todo-sidebar__search-lists-wrapper mb-4">
+        <div class="todo-sidebar__search-lists-wrapper mb-2">
             <form class="todo-sidebar__search-lists-form flex items-center" (submit)="onSearchList($event)">
                 <input class="todo-sidebar__search-lists-input primary-input" type="text" placeholder="Search"
                     [formField]="searchForm.search" (keydown.escape)="onClearSearchList()" />
@@ -28,14 +28,26 @@
         </div>
 
         <div class="todo-sidebar__sort-wrapper mb-4">
-            <form class="todo-sidebar__sort-form flex" (submit)="onApplyFilterLists($event)">
-                <div>
-                    <input type="date" [formField]="filterListsForm.startDate">
-                    <input type="date" [formField]="filterListsForm.endDate">
+            <form class="todo-sidebar__sort-form flex flex-col gap-2" (submit)="onApplyFilterLists($event)">
+                <div class="flex gap-3 items-center">
+                    <h1 class="todo-sidebar__sort-title text-gray-500">Filters:</h1>
+                    <div class="todo-sidebar__sort-actions flex gap-1">
+                        <button class="form-submit py-1 px-2" type="submit">Apply</button>
+                        <button class="form-cancel py-1 px-2" type="button"
+                            (click)="onClearFilterLists()">Clear</button>
+                    </div>
                 </div>
-                <div>
-                    <button type="submit">Apply</button>
-                    <button type="button" (click)="onClearFilterLists()">Clear</button>
+                <div class="todo-sidebar__sort-date flex flex-col gap-1">
+                    <label class="todo-sidebar__sort-date-start text-sm text-gray-500">
+                        Start date
+                        <input class="primary-date-input py-[2px] px-1" type="date"
+                            [formField]="filterListsForm.startDate">
+                    </label>
+                    <label class="todo-sidebar__sort-date-start text-sm text-gray-500">
+                        End date
+                        <input class="primary-date-input py-[2px] px-1" type="date"
+                            [formField]="filterListsForm.endDate">
+                    </label>
                 </div>
             </form>
         </div>
