@@ -1,0 +1,56 @@
+.todo-item-view {
+
+    &__card {
+        background-color: #FFF2F2;
+        border: 1px solid #e9dcdc;
+        border-radius: 4px;
+        padding: 8px;
+    }
+
+    &__checkbox-is-my-day:has(input:checked) {
+        border-color: #3069c579;
+    }
+
+    &__star {
+        cursor: pointer;
+
+        input {
+            display: none;
+        }
+
+        span {
+            font-size: 28px;
+            color: #9ca3af;
+            transition: color ease-in-out 200ms;
+        }
+
+        span:hover {
+            color: #facc15;
+        }
+
+        input:checked+span {
+            color: #facc15;
+        }
+    }
+
+    &__checkbox-is-my-day {
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+
+        input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        span {
+            color: #6b7280;
+            transition: color 0.2s ease;
+        }
+
+        input:checked+span {
+            color: #3b82f6;
+        }
+    }
+}

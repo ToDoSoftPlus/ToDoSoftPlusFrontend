@@ -1,0 +1,70 @@
+@let items = toDoItems();
+@let list = toDoList();
+@let listType = toDoStore.selectedListType();
+
+<div class="todo-list-view__container flex flex-col h-full px-7 py-11">
+    <div class="todo-list-view__header-wrapper flex mb-7">
+        <img class="todo-list-view__header-image" src="ListIcon.png" alt="" width="48px">
+        @if (isEditList()) {
+        <form class="todo-list-view__edit-form flex gap-4" (submit)="onListEditSubmit($event)">
+            <div class="todo-list-view__edit-input-wrapper flex flex-col gap-1">
+                <input class="todo-list-view__edit-input primary-input" type="text" placeholder="title"
+                    [formField]="editListForm.title">
+                <input class="todo-list-view__edit-input primary-input" type="text" placeholder="description"
+                    [formField]="editListForm.description">
+            </div>
+            <div class="todo-list-view__edit-actions flex gap-1">
+                <button class="todo-list-view__edit-submit form-submit px-4" type="submit">Submit</button>
+                <button class="todo-list-view__edit-cancel form-cancel px-4" type="button"
+                    (click)="onListEditCancel()">Cancel</button>
+            </div>
+        </form>
+        } @else if (list && list.id > -1){
+        <div class="todo-list-view__text-wrapper flex flex-col">
+            <p class="todo-list-view__header-text-title font-bold text-xl">{{list?.title}}</p>
+            <p class="todo-list-view__header-text-description text-gray-600 text-sm">{{list?.description}}</p>
+        </div>
+        } @else {
+        <div class="todo-list-view__text-wrapper flex flex-col">
+            <p class="todo-list-view__header-text-title font-bold text-xl">{{systemListTitle()}}</p>
+        </div>
+        }
+        @if (IsListTypeReqular()) {
+        <div class="todo-list-view__actions flex gap-1 ml-auto">
+            <button class="todo-list-actions-edit edit-button px-2" (click)="onListEditButtonClick()">Edit list</button>
+            <button class="todo-list-actions-delete delete-button px-2" (click)="onListDeleteButtonClick()">
+                Delete list
+            </button>
+        </div>
+        }
+    </div>
+
+    <div class="todo-list-view__item-list-wrapper flex flex-col h-full gap-2">
+        @if (items.length > 0) {
+        @for (item of items; track item.id) {
+        <app-todo-item-list [toDoItem]="item" />
+        }
+        <div class="mt-auto mb-5">
+            <app-pagination [page]="page()" [pageSize]="pageSize" [totalCount]="totalCount()"
+                [totalPages]="totalPages()" [hasNextPage]="hasNext()" [hasPreviousPage]="hasPrevious()"
+                (nextPage)="loadListItems(list?.id!, page() + 1, listType!)"
+                (previousPage)="loadListItems(list?.id!, page() - 1, listType!)"
+                (firstPage)="loadListItems(list?.id!, 1, listType!)"
+                (lastPage)="loadListItems(list?.id!, totalPages(), listType!)" />
+        </div>
+        }
+    </div>
+
+    <div class="todo-list-view__actions-wrapper mt-auto">
+        <div class="todo-list-view__actions-add flex items-center gap-2 p-2">
+            <img class="todo-list-view__actions-add-image cursor-pointer" src="AddIcon.svg" alt="" width="24px"
+                (click)="onItemCreateSubmit($event)">
+            <form class="todo-list-view__actions-add-form w-full" (submit)="onItemCreateSubmit($event)"
+                (keydown.escape)="onItemCreateClear()">
+                <input class="todo-list-view__actions-add-input w-full" type="text" placeholder="Create task"
+                    [formField]="createItemForm.title">
+            </form>
+            <i class="bi bi-x text-xl cursor-pointer" (click)="onItemCreateClear()"></i>
+        </div>
+    </div>
+</div>

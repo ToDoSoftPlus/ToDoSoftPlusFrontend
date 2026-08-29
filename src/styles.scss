@@ -1,0 +1,264 @@
+@import "tailwindcss";
+
+.form-input {
+    width: 300px;
+    outline: none;
+    border-bottom: 1px solid #c2d1c3;
+    padding-bottom: 8px;
+    transition: border-bottom-color ease-in-out 150ms;
+
+    &:focus {
+        border-bottom-color: #3874FF;
+    }
+
+    &::placeholder {
+        color: #939993;
+    }
+}
+
+.form-submit {
+    cursor: pointer;
+    background-color: #215E61;
+    border-radius: 8px;
+    transition: background-color ease-in-out 100ms;
+    color: #f7f6f6;
+
+    &:hover {
+        background-color: #307074;
+    }
+
+    &:focus {
+        background-color: #1d4749;
+    }
+}
+
+.form-cancel {
+    cursor: pointer;
+    background-color: #C5C1C1;
+    border-radius: 8px;
+    transition: background-color ease-in-out 100ms;
+    color: #f7f6f6;
+
+    &:hover {
+        background-color: #d8d0d0;
+    }
+
+    &:focus {
+        background-color: #b4adad;
+    }
+}
+
+.error {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+
+    span {
+        font-size: 12px;
+        color: #BE1A1A;
+    }
+}
+
+.edit-button {
+    cursor: pointer;
+    background-color: #FFD758;
+    border-radius: 8px;
+    transition: background-color ease-in-out 100ms;
+
+    &:hover {
+        background-color: #ffdb63;
+    }
+
+    &:focus {
+        background-color: #eec230;
+    }
+}
+
+.delete-button {
+    cursor: pointer;
+    background-color: #DF301C;
+    border-radius: 8px;
+    transition: background-color ease-in-out 100ms;
+
+    &:hover {
+        background-color: #fd4531;
+    }
+
+    &:focus {
+        background-color: #be2412;
+    }
+}
+
+.primary-input {
+    width: 100%;
+    background-color: white;
+    border: 1px solid #ece3d6;
+    border-bottom: 1px solid #817373;
+    border-radius: 4px;
+    padding-block: 1px;
+    padding-inline: 8px;
+    transition: background-color ease-in-out 200ms;
+
+    &:hover {
+        background-color: #f5f5f5;
+    }
+
+    &:focus {
+        outline: none;
+        background-color: #f5f5f5;
+        border-bottom: 1px solid #3874FF;
+    }
+}
+
+.primary-date-input {
+    box-sizing: border-box;
+    background-color: white;
+    border: 1px solid #ece3d6;
+    border-bottom: 1px solid #817373;
+    border-radius: 4px;
+
+    font: inherit;
+    color: #333;
+
+    transition:
+        background-color ease-in-out 200ms,
+        border-bottom-color ease-in-out 200ms;
+
+    &:hover {
+        background-color: #f5f5f5;
+    }
+
+    &:focus {
+        outline: none;
+        background-color: #f5f5f5;
+        border-bottom-color: #3874FF;
+    }
+
+    &::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+.checkbox-complete {
+    display: inline-flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    input {
+        display: none;
+    }
+
+    span {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #9ca3af;
+        border-radius: 50%;
+        transition: 0.2s;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            &::after {
+                content: '✓';
+                color: #9ca3af;
+                font-size: 12px;
+                font-weight: bold;
+            }
+        }
+    }
+
+    input:checked+span {
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+
+        &:after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    }
+
+    &:has(input:disabled) {
+        cursor: default;
+
+        span {
+            cursor: default;
+        }
+
+        &:has(input:not(:checked)) span:hover::after {
+            content: none;
+        }
+
+        &:has(input:checked) span:hover::after {
+            content: '✓';
+        }
+    }
+}
+
+.checkbox-complete-small {
+    display: inline-flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    input {
+        display: none;
+    }
+
+    span {
+        width: 14px;
+        height: 14px;
+        border: 2px solid #9ca3af;
+        border-radius: 50%;
+        transition: 0.2s;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            &::after {
+                content: '✓';
+                color: #9ca3af;
+                font-size: 8px;
+                font-weight: bold;
+            }
+        }
+    }
+
+    input:checked+span {
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+
+        &:after {
+            content: '✓';
+            color: white;
+            font-size: 8px;
+            font-weight: bold;
+        }
+    }
+
+    &:has(input:disabled) {
+        cursor: default;
+
+        span {
+            cursor: default;
+        }
+
+        &:has(input:not(:checked)) span:hover::after {
+            content: none;
+        }
+
+        &:has(input:checked) span:hover::after {
+            content: '✓';
+        }
+    }
+}

@@ -1,0 +1,103 @@
+@let sidebarLists = this.todoStore.sidebarLists();
+@let selectedListId = this.todoStore.selectedListId();
+@let selectedItem = this.todoStore.selectedItem();
+
+<div class="todo-page flex flex-row h-full">
+    <div class="todo-sidebar px-5 flex flex-col mt-5 w-[350px]">
+        <div class="todo-sidebar__user-wrapper flex flex-row mb-4">
+            <img class="todo-sidebar__user-image mr-2" src="UserIcon.png" alt="User icon" width="48px">
+            <div class="todo-sidebar__user-info-wrapper flex flex-col justify-center">
+                <div class="todo-sidebar__user-info-top flex gap-2">
+                    <p class="todo-sidebar__user-info-name font-bold">{{currentUser()?.name}}</p>
+                    <button class="todo-sidebar__user-logout-button px-3" (click)="onUserExitButtonClick()">
+                        Exit
+                    </button>
+                </div>
+                <p class="todo-sidebar__user-info-gmail text-sm text-gray-500">{{currentUser()?.email}}</p>
+            </div>
+        </div>
+
+        <div class="todo-sidebar__search-lists-wrapper mb-2">
+            <form class="todo-sidebar__search-lists-form flex items-center" (submit)="onSearchList($event)">
+                <input class="todo-sidebar__search-lists-input primary-input" type="text" placeholder="Search"
+                    [formField]="searchForm.search" (keydown.escape)="onClearSearchList()" />
+                <button class="todo-sidebar__search-lists-button" type="submit">
+                    <img class="todo-sidebar__search-lists-icon" src="SearchIcon.svg" alt="search-icon">
+                </button>
+            </form>
+        </div>
+
+        <div class="todo-sidebar__filter-wrapper mb-1">
+            <form class="todo-sidebar__filter-form flex flex-col gap-2" (submit)="onApplyFilterLists($event)">
+                <div class="flex gap-3 items-center">
+                    <h1 class="todo-sidebar__filter-title text-gray-500">Filters:</h1>
+                    <div class="todo-sidebar__filter-actions flex gap-1">
+                        <button class="form-submit py-1 px-2" type="submit">Apply</button>
+                        <button class="form-cancel py-1 px-2" type="button"
+                            (click)="onClearFilterLists()">Clear</button>
+                    </div>
+                </div>
+                <div class="todo-sidebar__filter-date flex flex-col gap-1">
+                    <label class="todo-sidebar__filter-date-start text-sm text-gray-500">
+                        Start date
+                        <input class="primary-date-input py-[2px] px-1" type="date"
+                            [formField]="filterListsForm.startDate">
+                    </label>
+                    <label class="todo-sidebar__filter-date-end text-sm text-gray-500">
+                        End date
+                        <input class="primary-date-input py-[2px] px-1" type="date"
+                            [formField]="filterListsForm.endDate">
+                    </label>
+                </div>
+            </form>
+        </div>
+
+        <div class="todo-sidebar__system-lists-wrapper">
+            <app-todo-sidebar-list [toDoSidebarList]="myDaySidebarList()" />
+            <app-todo-sidebar-list [toDoSidebarList]="importantSidebarList()" />
+            <app-todo-sidebar-list [toDoSidebarList]="taskSidebarList()" />
+        </div>
+
+        <hr />
+
+        @if (sidebarLists) {
+        <div class="todo-sidebar__user-lists-wrapper" (scroll)="onSidebarScroll($event)">
+            @for (list of sidebarLists; track list.id) {
+            <app-todo-sidebar-list [toDoSidebarList]="list" />
+            }
+            @if (isLoadingLists()) {
+            <div class="todo-sidebar__user-lists-loading text-center py-2">...Loading</div>
+            }
+        </div>
+        <div class="todo-sidebar__user-create-list-wrapper">
+            @if (isCreateSidebarList()) {
+            <app-create-todo-sidebar-list (onSubmit)="onCreateListSubmit($event)" (onCancel)="onCreateListCancel()" />
+            }
+        </div>
+        }
+
+        <div class="todo-sidebar__actions-wrapper mt-auto mb-4">
+            <button class="todo-sidebar__actions-add-list flex gap-3 p-2" type="button"
+                (click)="isCreateSidebarList.set(true)">
+                <img class="todo-sidebar__actions-add-list-image" src="AddIcon.svg" alt="Add icon" width="24px">
+                <p class="todo-sidebar__actions-add-list-text">Create list</p>
+            </button>
+        </div>
+    </div>
+
+    <section class="todo-list-container w-full h-full">
+        @if (selectedListId !== null) {
+        <app-todo-list-view (onActionError)="onActionError($event)" />
+        }
+
+    </section>
+
+    @if (selectedItem !== null) {
+    <section class="todo-item-container w-1/3 h-full">
+        <app-todo-item-view />
+    </section>
+    }
+
+</div>
+
+<app-status-notification [notification]="statusNotification()" (closed)="statusNotification.set(null)" />

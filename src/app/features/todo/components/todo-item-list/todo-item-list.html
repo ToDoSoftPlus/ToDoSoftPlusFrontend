@@ -1,0 +1,20 @@
+@let item = toDoItem();
+
+<div class="todo-item-list__wrapper flex p-3 gap-3 items-center" (click)="onItemClick()">
+    <div class="todo-item-list__complete-task-wrapper flex items-center">
+        <label class="todo-item-list__complete-task-checkbox">
+            <input type="checkbox" [checked]="item.isCompleted" disabled>
+            <span></span>
+        </label>
+
+    </div>
+
+    <p class="todo-item-list__text">{{item.title}}</p>
+
+    <div class="todo-item-list__important-wrapper ml-auto">
+        <label class="todo-item-list__important-star">
+            <input type="checkbox" [checked]="item.isImportant" disabled>
+            <span>★</span>
+        </label>
+    </div>
+</div>

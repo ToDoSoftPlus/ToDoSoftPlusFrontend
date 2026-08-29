@@ -1,0 +1,54 @@
+.todo-sidebar {
+    &__search-lists {
+        &-icon {
+            width: 32px;
+            height: 16px;
+            padding-inline: 4px;
+            padding-block: 2px;
+            position: relative;
+            left: -35px;
+            border-radius: 8px;
+            transition: background-color ease-in-out 200ms;
+
+            &:hover {
+                background-color: #f0e9e9;
+
+            }
+        }
+    }
+
+    &__actions {
+        &-add-list {
+            border-radius: 4px;
+            width: 100%;
+            transition: background-color ease-in-out 200ms;
+
+            &:hover {
+                background-color: #f5f5f5;
+            }
+        }
+    }
+
+    &__user-logout {
+
+        &-button {
+            background-color: #C5B3D3;
+            border-radius: 8px;
+            border: 1px solid #b19ac2;
+
+            &:hover {
+                background-color: #d5c4e2;
+
+            }
+
+            &:focus {
+                background-color: #ad93c0;
+            }
+        }
+    }
+
+    &__user-lists-wrapper {
+        max-height: 40%;
+        overflow-y: auto;
+    }
+}

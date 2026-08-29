@@ -1,0 +1,34 @@
+<div class="pagination">
+
+    <button type="button" class="pagination__arrow" [disabled]="!hasPreviousPage()" (click)="onFirstPage()">
+        <i class="bi bi-chevron-double-left"></i>
+    </button>
+
+    <button type="button" class="pagination__arrow" [disabled]="!hasPreviousPage()" (click)="onPreviousPage()">
+        <i class="bi bi-chevron-left"></i>
+    </button>
+
+    @if (hasPreviousPage()) {
+    <button type="button" class="pagination__page" (click)="onPreviousPage()">
+        {{ page() - 1 }}
+    </button>
+    }
+
+    <button type="button" class="pagination__page pagination__page--active">
+        {{ page() }}
+    </button>
+
+    @if (hasNextPage()) {
+    <button type="button" class="pagination__page" (click)="onNextPage()">
+        {{ page() + 1 }}
+    </button>
+    }
+
+    <button type="button" class="pagination__arrow" [disabled]="!hasNextPage()" (click)="onNextPage()">
+        <i class="bi bi-chevron-right"></i>
+    </button>
+
+    <button type="button" class="pagination__arrow" [disabled]="!hasNextPage()" (click)="onLastPage()">
+        <i class="bi bi-chevron-double-right"></i>
+    </button>
+</div>

@@ -1,0 +1,62 @@
+@if (notification(); as notification) {
+<div class="notification__container shadow-lg" [class.slide-in]="!isClosing" [class.slide-out]="isClosing"
+    [class.notification-success]="notification.type === 'success'"
+    [class.notification-error]="notification.type === 'error'">
+
+    <div class="notification__content">
+
+        <div class="notification__icon-section">
+            @switch (notification.type) {
+            @case ('success') {
+            <i class="bi bi-check-circle-fill"></i>
+            }
+
+            @case ('error') {
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            }
+            }
+        </div>
+
+        <div class="notification__text-section">
+
+            <div class="notification__text-title">
+                @switch (notification.type) {
+                @case ('success') {
+                Success
+                }
+
+                @case ('error') {
+                Error
+                }
+                }
+            </div>
+
+            @if (notification.message) {
+            <div class="notification__message">
+                {{ notification.message }}
+            </div>
+            }
+
+            @if (notification.errors) {
+            <ul class="notification__errors">
+                @for (field of notification.errors | keyvalue; track field.key) {
+                @for (error of field.value; track error) {
+                <li>{{ error }}</li>
+                }
+                }
+            </ul>
+            }
+
+        </div>
+
+        <button type="button" class="notification__close-button" (click)="close()" aria-label="Close">
+            <i class="bi bi-x"></i>
+        </button>
+
+    </div>
+
+    <div class="notification__progress-bar" [class.progress-success]="notification.type === 'success'"
+        [class.progress-error]="notification.type === 'error'"></div>
+
+</div>
+}
