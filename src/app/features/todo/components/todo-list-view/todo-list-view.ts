@@ -88,7 +88,18 @@ export class TodoListView {
         return;
       }
 
-      this.toDoItems.update(items => items.map(item => item.id === changedItem.id ? changedItem : item));
+      untracked(() => {
+        const listType = this.toDoStore.selectedListType();
+
+        if (!listType)
+          return;
+
+        if (listType === ToDoListType.Regular)
+          this.toDoItems.update(items => items.map(item => item.id === changedItem.id ? changedItem : item));
+        else
+          this.loadListItems(this.toDoStore.selectedListId(), this.page(), listType)
+
+      })
     })
 
     effect(() => {
